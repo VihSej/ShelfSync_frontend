@@ -6,13 +6,16 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Keyboard,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from "react-native";
-import { Input } from '@rneui/themed';
+import { Input } from "@rneui/themed"; // Import the Input component
 
 interface AddThingViewProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (text: string) => void; // Update onConfirm to include input text
 }
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -25,6 +28,7 @@ export default function AddThingView({
 }: AddThingViewProps) {
   const slideAnim = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [shouldRender, setShouldRender] = useState(visible);
+  const [inputText, setInputText] = useState(""); // State for input field
 
   React.useEffect(() => {
     if (visible) {
@@ -44,33 +48,51 @@ export default function AddThingView({
   if (!shouldRender) return null; // Don't render when hidden
 
   return (
-    <View style={styles.overlay}>
-      {/* Backdrop to close the view */}
-      <TouchableOpacity
-        style={styles.backdrop}
-        onPress={onClose}
-        activeOpacity={1}
-      />
-      {/* Animated sliding panel */}
-      <Animated.View
-  style={[
-    styles.container,
-    {
-      transform: [{ translateY: slideAnim }],
-    },
-  ]}
->
-  {/* Close button */}
-  <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-    <Text style={styles.closeButtonText}>✕</Text>
-  </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.overlay}>
+        {/* Backdrop to close the view */}
+        <TouchableOpacity
+          style={styles.backdrop}
+          onPress={onClose}
+          activeOpacity={1}
+        />
+        {/* Animated sliding panel */}
+        <Animated.View
+          style={[
+            styles.container,
+            {
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            {/* Close button */}
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Text style={styles.closeButtonText}>✕</Text>
+            </TouchableOpacity>
 
-  {/* Add Item Bar */}
-  <TouchableOpacity style={styles.addItemBar} onPress={onConfirm}>
-    <Text style={styles.addItemBarText}>Add Item</Text>
-  </TouchableOpacity>
-</Animated.View>
-    </View>
+            {/* Input Field Label Text: */}
+            <Text style={styles.inputLabel}>Item Name</Text>
+            {/* Input Field */}
+            <Input
+              placeholder="Enter item name here"
+              value={inputText}
+              onChangeText={setInputText} // Update state with input text
+              containerStyle={styles.inputContainer}
+              inputStyle={styles.inputStyle}
+            />
+
+            {/* Add Item Bar */}
+            <TouchableOpacity
+              style={styles.addItemBar}
+              onPress={() => onConfirm(inputText)} // Pass the input text to onConfirm
+            >
+              <Text style={styles.addItemBarText}>Add Item</Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </Animated.View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -115,28 +137,39 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 12,
-    marginTop: 40, // Space under the close button
-    textAlign: "center",
+  inputContainer: {
+    position: "relative",
+    paddingHorizontal: 0
+  },
+  inputLabel: {
+    fontSize: 16, // Consistent and readable size
+    color: "#333", // Neutral color for accessibility
+    marginTop: 40,
+    marginBottom: 10, // Space between the label and the input
+    fontWeight: "500", // Slightly bold for emphasis
+  },
+  inputInnerContainer: {
+    paddingHorizontal: 0, // Match label's padding for alignment
+  },
+  inputStyle: {
+    fontSize: 16,
+    color: "#333",
   },
   addItemBar: {
     position: "absolute", // Stick to the bottom of the screen
-    bottom: 80, // Align to the screen bottom
+    borderRadius: 15,
+    bottom: 100, // Align to the screen bottom
     left: 0,
     right: 0,
-    height: 90, // Height of the bar
+    height: 70, // Height of the bar
     backgroundColor: "green", // Bar background color
     justifyContent: "center",
     alignItems: "center",
     elevation: 4, // Slight shadow for better visibility
-    paddingBottom: 15
   },
   addItemBarText: {
     color: "#fff",
     fontSize: 25,
     fontWeight: "600",
-  },
+  } 
 });
