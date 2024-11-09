@@ -7,7 +7,7 @@ export default function RootLayout() {
         name="index"
         options={{
           title: "Home", // Optional: shows in header
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

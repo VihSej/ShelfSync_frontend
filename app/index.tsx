@@ -1,28 +1,45 @@
-import { Image, StyleSheet, Platform, View, Text } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Header as HeaderRNE } from "@rneui/themed";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Icon } from "@rneui/base";
 
 export default function HomeScreen() {
   return (
-    <View>
-      <Text>Hello World</Text>
-    </View>
+    <SafeAreaProvider>
+      <HeaderRNE
+        elevated={true}
+        leftComponent={
+          <View style={styles.header}>
+            <TouchableOpacity>
+              <Icon name="menu" color="white" size={35} />
+            </TouchableOpacity>
+          </View>
+        }
+        rightComponent={
+          <View style={styles.header}>
+            <TouchableOpacity>
+              <Icon name="account-circle" color="white" size={35} />
+            </TouchableOpacity>
+          </View>
+        }
+        centerComponent={{ text: "Universe", style: styles.heading }}
+      />
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  heading: {
+    // Title of space
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+  header: {
+    // Navigation bar
+    display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    marginTop: 5,
   },
 });
