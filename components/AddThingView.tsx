@@ -15,7 +15,7 @@ import { Input } from "@rneui/themed"; // Import the Input component
 interface AddThingViewProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: (text: string) => void; // Update onConfirm to include input text
+  onConfirm: (data: { name: string; description: string }) => void; // Update onConfirm to include name and description
 }
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -28,7 +28,17 @@ export default function AddThingView({
 }: AddThingViewProps) {
   const slideAnim = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [shouldRender, setShouldRender] = useState(visible);
-  const [inputText, setInputText] = useState(""); // State for input field
+  const [inputText, setInputText] = useState(""); // State for item name
+  const [descriptionText, setDescriptionText] = useState(""); // State for item description
+  const [error, setError] = useState<string | undefined>(undefined); // State for error message
+
+  // Centralized close logic
+  const handleClose = () => {
+    setError(undefined); // Reset error message
+    setInputText(""); // Clear item name
+    setDescriptionText(""); // Clear description
+    onClose(); // Trigger onClose prop
+  };
 
   React.useEffect(() => {
     if (visible) {
@@ -47,13 +57,23 @@ export default function AddThingView({
 
   if (!shouldRender) return null; // Don't render when hidden
 
+  const handleConfirm = () => {
+    if (!inputText.trim()) {
+      setError("Item Name is required"); // Show error if input is empty
+      return;
+    }
+    setError(undefined); // Clear error on valid input
+    onConfirm({ name: inputText, description: descriptionText }); // Pass name and description to onConfirm
+    handleClose(); // Reset and close the view
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.overlay}>
         {/* Backdrop to close the view */}
         <TouchableOpacity
           style={styles.backdrop}
-          onPress={onClose}
+          onPress={handleClose} // Centralized close logic
           activeOpacity={1}
         />
         {/* Animated sliding panel */}
@@ -67,26 +87,37 @@ export default function AddThingView({
         >
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
             {/* Close button */}
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
 
-            {/* Input Field Label Text: */}
+            {/* Item Name Label */}
             <Text style={styles.inputLabel}>Item Name</Text>
-            {/* Input Field */}
+            {/* Item Name Input */}
             <Input
               placeholder="Enter item name here"
               value={inputText}
               onChangeText={setInputText} // Update state with input text
               containerStyle={styles.inputContainer}
               inputStyle={styles.inputStyle}
+              errorMessage={error} // Display error message if any
+              errorStyle={styles.errorText}
+            />
+
+            {/* Description Label */}
+            <Text style={styles.inputLabel}>Item Description (Optional)</Text>
+            {/* Description Input */}
+            <Input
+              placeholder="Enter item description here"
+              value={descriptionText}
+              onChangeText={setDescriptionText} // Update state with description text
+              containerStyle={styles.inputContainer}
+              inputStyle={styles.inputStyle}
             />
 
             {/* Add Item Bar */}
-            <TouchableOpacity
-              style={styles.addItemBar}
-              onPress={() => onConfirm(inputText)} // Pass the input text to onConfirm
-            >
+            
+            <TouchableOpacity style={styles.addItemBar} onPress={handleConfirm}>
               <Text style={styles.addItemBarText}>Add Item</Text>
             </TouchableOpacity>
           </KeyboardAvoidingView>
@@ -125,12 +156,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10,
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "red",
-    borderRadius: 15,
+    borderRadius: 18,
   },
   closeButtonText: {
     color: "white",
@@ -139,29 +170,31 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     position: "relative",
-    paddingHorizontal: 0
+    paddingHorizontal: 0,
   },
   inputLabel: {
     fontSize: 16, // Consistent and readable size
     color: "#333", // Neutral color for accessibility
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 10, // Space between the label and the input
     fontWeight: "500", // Slightly bold for emphasis
-  },
-  inputInnerContainer: {
-    paddingHorizontal: 0, // Match label's padding for alignment
   },
   inputStyle: {
     fontSize: 16,
     color: "#333",
   },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginTop: 5,
+  },
   addItemBar: {
     position: "absolute", // Stick to the bottom of the screen
-    borderRadius: 15,
-    bottom: 100, // Align to the screen bottom
+    bottom: 80, // Align to the screen bottom
     left: 0,
     right: 0,
-    height: 70, // Height of the bar
+    height: 90, // Height of the bar
+    paddingBottom: 13,
     backgroundColor: "green", // Bar background color
     justifyContent: "center",
     alignItems: "center",
@@ -171,5 +204,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 25,
     fontWeight: "600",
-  } 
+  },
 });
