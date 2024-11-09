@@ -1,13 +1,16 @@
 import AddThingButton from "@/components/AddThingButton";
+import AddThingView from "@/components/AddThingView";
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
 import { useState } from "react";
+import { Button } from "react-native";
 import { View, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isSpacesVisible, setSpacesVisible] = useState(false);
+  const [isAddThingVisible, setAddThingVisible] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -30,7 +33,17 @@ export default function HomeScreen() {
         }}
       />
       <View style={styles.internalContainer}></View>
-      <AddThingButton />
+      <AddThingView
+        visible={isAddThingVisible}
+          onClose={() => setAddThingVisible(false)}
+          onConfirm={() => {
+            setAddThingVisible(false);
+            console.log("New thing added!");
+        }}
+      />
+
+      {/* AddThingButton */}
+      <AddThingButton onPress={() => setAddThingVisible(true)} />
     </View>
   );
 }
