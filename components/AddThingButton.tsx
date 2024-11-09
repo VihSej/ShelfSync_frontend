@@ -1,7 +1,7 @@
 import { Icon } from "@rneui/base";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function CreateNewThing() {
+export default function AddThingButton() {
   return (
     <TouchableOpacity
       onPress={() => {

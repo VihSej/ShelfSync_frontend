@@ -1,4 +1,4 @@
-import CreateNewThing from "@/components/CreateNewThing";
+import AddThingButton from "@/components/AddThingButton";
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
@@ -30,7 +30,7 @@ export default function HomeScreen() {
         }}
       />
       <View style={styles.internalContainer}></View>
-      <CreateNewThing />
+      <AddThingButton />
     </View>
   );
 }
