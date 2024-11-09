@@ -1,11 +1,12 @@
 import { Icon } from "@rneui/base";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-
+import { SERVER_URL } from "../envVariables.ts";
 export default function CreateNewSpace() {
+  const vari = SERVER_URL;
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log("Pressed!");
+        console.log(vari);
       }}
       activeOpacity={0.7}
     >

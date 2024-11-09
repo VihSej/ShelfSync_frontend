@@ -35,6 +35,36 @@ export default function SpaceList({ visible, onClose }: SpaceListProps) {
     });
   }, [visible]);
 
+  //   React.useEffect(() => {
+  //     const data = fetch();
+  //     console.log(data);
+  //   }, [visible]);
+
+  const fetchSpaces = async (userId: string, jwtToken: string) => {
+    try {
+      const response = await fetch(`http://102.242.533.21/spaces`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized - Please login again");
+        }
+        throw new Error("Failed to fetch spaces");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching spaces:", error);
+      throw error;
+    }
+  };
+
   if (!shouldRender) return null;
 
   return (
@@ -60,15 +90,6 @@ export default function SpaceList({ visible, onClose }: SpaceListProps) {
           <Icon name="arrow-back" color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <SpaceListItem name="space1" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <SpaceListItem name="space1" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <SpaceListItem name="space1" />
-        </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
           <SpaceListItem name="space1" />
         </TouchableOpacity>
