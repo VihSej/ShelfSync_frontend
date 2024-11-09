@@ -11,6 +11,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Header onPressMenu={setMenuVisible} />
       <Menu visible={isMenuVisible} onClose={() => setMenuVisible(false)} />
+      <View style={styles.internalContainer}></View>
       <CreateNewSpace />
     </View>
   );
@@ -20,6 +21,10 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     justifyContent: "space-between",
+    flex: 1,
+  },
+  internalContainer: {
+    backgroundColor: "white",
     flex: 1,
   },
 });

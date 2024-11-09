@@ -27,5 +27,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    position: "absolute",
+    left: 5,
+    bottom: 5,
   },
 });

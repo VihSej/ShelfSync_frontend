@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Header as HeaderRNE } from "@rneui/themed";
 import { Icon } from "@rneui/base";
+import { useRouter } from "expo-router";
 
 export default function Header({
   onPressMenu,
 }: {
   onPressMenu: (value: boolean) => void;
 }) {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <HeaderRNE
@@ -23,7 +25,12 @@ export default function Header({
         rightComponent={
           <View style={styles.header}>
             <TouchableOpacity>
-              <Icon name="account-circle" color="white" size={35} />
+              <Icon
+                name="account-circle"
+                color="white"
+                size={35}
+                onPress={() => router.push("/profile")}
+              />
             </TouchableOpacity>
           </View>
         }

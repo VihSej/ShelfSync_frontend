@@ -49,17 +49,21 @@ export default function Menu({ visible, onClose }: MenuProps) {
           },
         ]}
       >
-        <TouchableOpacity style={styles.backButton} onPress={onClose}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={onClose}
+          activeOpacity={0.7}
+        >
           <Icon name="arrow-back" color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Option 1</Text>
+        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
+          <Text style={styles.menuText}>Search</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Option 2</Text>
+        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
+          <Text style={styles.menuText}>Pinned Items</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Option 3</Text>
+        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
+          <Text style={styles.menuText}>Login / Sign Out</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>
