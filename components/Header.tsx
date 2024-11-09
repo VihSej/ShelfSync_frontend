@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Header as HeaderRNE } from "@rneui/themed";
 import { Icon } from "@rneui/base";
+import { useRouter } from "expo-router";
 
-export default function Header({
-  onPressMenu,
-}: {
+interface HeaderProps {
   onPressMenu: (value: boolean) => void;
-}) {
+  onPressSpaceList: (value: boolean) => void;
+}
+
+export default function Header({ onPressMenu, onPressSpaceList }: HeaderProps) {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <HeaderRNE
@@ -15,16 +18,31 @@ export default function Header({
         elevated={false}
         leftComponent={
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => onPressMenu(true)}>
-              <Icon name="menu" color="white" size={35} />
+            <TouchableOpacity>
+              <Icon
+                name="explore"
+                color="white"
+                size={35}
+                onPress={() => {
+                  onPressMenu(false);
+                  onPressSpaceList(true);
+                }}
+              />
             </TouchableOpacity>
           </View>
         }
         rightComponent={
           <View style={styles.header}>
-            <TouchableOpacity>
-              <Icon name="account-circle" color="white" size={35} />
-            </TouchableOpacity>
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => {
+                  onPressSpaceList(false);
+                  onPressMenu(true);
+                }}
+              >
+                <Icon name="menu" color="white" size={35} />
+              </TouchableOpacity>
+            </View>
           </View>
         }
         centerComponent={{ text: "Universe", style: styles.heading }}
@@ -39,18 +57,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 5,
+    marginTop: 0,
   },
   header: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 5,
+    marginTop: 0,
   },
   dropdown: {
-    position: "absolute", // Position the dropdown relative to the header
-    top: 70, // Adjust to position below the header
-    left: 10, // Optional: Add padding to align dropdown
+    position: "absolute",
+    top: 70,
+    left: 10,
     right: 10,
-    zIndex: 1000, // Ensure it appears on top
+    zIndex: 1000,
   },
 });
