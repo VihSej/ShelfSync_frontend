@@ -1,0 +1,25 @@
+[
+  {
+    "id": "0",
+    "user_id": "user1",
+    "name": "Sagnik",
+    "description?": "",
+    "coords1": "",
+    "coords2": "",
+    "superSpace": "",
+    "subSpaces": [
+      { "space_id": "1", "name": "USA" },
+      { "space_id": "2", "name": "Massachusetts" },
+      { "space_id": "3", "name": "Amherst" },
+      { "space_id": "4", "name": "UMASS" },
+      { "space_id": "5", "name": "Isenberg" }
+    ],
+    "thingList": [
+      { "thing_id": "1", "name": "Pencil" },
+      { "thing_id": "2", "name": "Tennis Balls" },
+      { "thing_id": "3", "name": "HDMI Cable" },
+      { "thing_id": "4", "name": "Car Keys" },
+      { "thing_id": "5", "name": "Laptop" }
+    ]
+  }
+]

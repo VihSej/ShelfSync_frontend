@@ -1,45 +1,25 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Header as HeaderRNE } from "@rneui/themed";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Icon } from "@rneui/base";
+import CreateNewSpace from "@/components/CreateNewSpace";
+import Header from "@/components/Header";
+import Menu from "@/components/Menu";
+import { useState } from "react";
+import { View, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
+  const [isMenuVisible, setMenuVisible] = useState(false);
+
   return (
-    <SafeAreaProvider>
-      <HeaderRNE
-        elevated={true}
-        leftComponent={
-          <View style={styles.header}>
-            <TouchableOpacity>
-              <Icon name="menu" color="white" size={35} />
-            </TouchableOpacity>
-          </View>
-        }
-        rightComponent={
-          <View style={styles.header}>
-            <TouchableOpacity>
-              <Icon name="account-circle" color="white" size={35} />
-            </TouchableOpacity>
-          </View>
-        }
-        centerComponent={{ text: "Universe", style: styles.heading }}
-      />
-    </SafeAreaProvider>
+    <View style={styles.container}>
+      <Header onPressMenu={setMenuVisible} />
+      <Menu visible={isMenuVisible} onClose={() => setMenuVisible(false)} />
+      <CreateNewSpace />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  heading: {
-    // Title of space
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-  header: {
-    // Navigation bar
+  container: {
     display: "flex",
-    flexDirection: "row",
-    marginTop: 5,
+    justifyContent: "space-between",
+    flex: 1,
   },
 });
