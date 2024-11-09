@@ -1,4 +1,5 @@
 import { Icon } from "@rneui/base";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -6,15 +7,17 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 
 interface MenuProps {
   visible: boolean;
   onClose: () => void;
 }
-
+const MENU_WIDTH = 300;
 export default function Menu({ visible, onClose }: MenuProps) {
-  const slideAnim = React.useRef(new Animated.Value(-300)).current; // Start off-screen
+  const screenWidth = Dimensions.get("window").width;
+  const slideAnim = React.useRef(new Animated.Value(screenWidth)).current;
   const [shouldRender, setShouldRender] = useState(visible);
 
   React.useEffect(() => {
@@ -22,7 +25,7 @@ export default function Menu({ visible, onClose }: MenuProps) {
       setShouldRender(true);
     }
     Animated.timing(slideAnim, {
-      toValue: visible ? 0 : -300,
+      toValue: visible ? screenWidth - MENU_WIDTH : screenWidth,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
@@ -54,13 +57,20 @@ export default function Menu({ visible, onClose }: MenuProps) {
           onPress={onClose}
           activeOpacity={0.7}
         >
-          <Icon name="arrow-back" color="white" />
+          <Icon name="arrow-forward" color="white" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
           <Text style={styles.menuText}>Search</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
           <Text style={styles.menuText}>Pinned Items</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuItem}
+          activeOpacity={0.5}
+          onPress={() => router.push("/profile")}
+        >
+          <Text style={styles.menuText}>Your Account</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
           <Text style={styles.menuText}>Login / Sign Out</Text>
@@ -79,7 +89,10 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 10,
+    alignSelf: "flex-start",
+    marginRight: 20,
+    marginLeft: 20,
+    marginBottom: 20,
   },
   overlay: {
     position: "absolute",
@@ -94,7 +107,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: 250,
+    width: MENU_WIDTH,
     backgroundColor: "white",
     paddingTop: 50,
     shadowColor: "#000",
