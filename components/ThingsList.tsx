@@ -30,21 +30,23 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   const [isThingViewVisible, setIsThingViewVisible] = useState(false);
 
   useEffect(() => {
-    const loadThings = async () => {
-      try {
-        setIsLoading(true);
-        const items = await fetchThings(spaceId);
-        setThings(items);
-        setError(null);
-      } catch (err) {
-        setError("Failed to load things. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const loadThings = async () => {
+    if (!spaceId) return; // Avoid fetching if spaceId is empty
+    try {
+      setIsLoading(true);
+      const items = await fetchThings(spaceId);
+      setThings(items);
+      setError(null);
+    } catch (err) {
+      setError("Failed to load things. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    loadThings();
-  }, [spaceId]);
+  loadThings();
+}, [spaceId]); // Ensure this runs only when spaceId changes
+
 
   const handleThingPress = (thing: Thing) => {
     setSelectedThing(thing);

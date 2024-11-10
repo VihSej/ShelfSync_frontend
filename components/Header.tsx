@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Header as HeaderRNE } from "@rneui/themed";
 import { Icon } from "@rneui/base";
@@ -18,25 +18,20 @@ interface Space {
 interface HeaderProps {
   onPressMenu: (value: boolean) => void;
   onPressSpaceList: (value: boolean) => void;
+  onPressQRCode: () => void; // Add QR code press handler
   currentSpace: string;
   shouldRender: boolean;
-}
-
-interface User {
-  _id: string;
-  email: string;
-  name: string;
-  password: string;
-  universe: string;
 }
 
 export default function Header({
   onPressMenu,
   onPressSpaceList,
+  onPressQRCode, // Use QR code press handler
   currentSpace,
 }: HeaderProps) {
   const router = useRouter();
   const { space } = useFetchSpace(currentSpace);
+
   return (
     <View style={styles.container}>
       <HeaderRNE
@@ -44,34 +39,37 @@ export default function Header({
         elevated={false}
         leftComponent={
           <View style={styles.header}>
-            <TouchableOpacity>
-              <Icon
-                name="explore"
-                color="white"
-                size={35}
-                onPress={() => {
-                  onPressMenu(false);
-                  onPressSpaceList(true);
-                }}
-              />
+            {/* Explore Icon */}
+            <TouchableOpacity
+              onPress={() => {
+                onPressMenu(false);
+                onPressSpaceList(true);
+              }}
+              style={styles.iconContainer}
+            >
+              <Icon name="explore" color="white" size={35} />
             </TouchableOpacity>
           </View>
         }
         rightComponent={
           <View style={styles.header}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                onPress={() => {
-                  onPressSpaceList(false);
-                  onPressMenu(true);
-                }}
-              >
-                <Icon name="menu" color="white" size={35} />
-              </TouchableOpacity>
-            </View>
+            {/* QR Code Icon */}
+            <TouchableOpacity onPress={onPressQRCode} style={styles.iconContainer}>
+              <Icon name="qr-code-outline" type="ionicon" color="white" size={30} />
+            </TouchableOpacity>
+            {/* Menu Icon */}
+            <TouchableOpacity
+              onPress={() => {
+                onPressSpaceList(false);
+                onPressMenu(true);
+              }}
+              style={styles.iconContainer}
+            >
+              <Icon name="menu" color="white" size={35} />
+            </TouchableOpacity>
           </View>
         }
-        centerComponent={{ text: space?.name, style: styles.heading }}
+        centerComponent={{ text: space?.name || "No Space Selected", style: styles.heading }}
       />
     </View>
   );
@@ -90,13 +88,9 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 0,
+    alignItems: "center",
   },
-  dropdown: {
-    position: "absolute",
-    top: 70,
-    left: 10,
-    right: 10,
-    zIndex: 1000,
+  iconContainer: {
+    marginHorizontal: 5, // Add spacing between icons
   },
 });

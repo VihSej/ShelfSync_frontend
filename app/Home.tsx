@@ -5,27 +5,18 @@ import AddSpaceView from "@/components/AddSpaceView";
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
-import { View, StyleSheet } from "react-native";
+import QRCodeScanner from "@/components/QRCodeScanner";
+import { View, StyleSheet, Alert } from "react-native";
 
 import { useUser } from "@/hooks/useUser";
-
 import ThingsList from "@/components/ThingsList";
-
-interface Space {
-  _id: string;
-  user_id: string;
-  name: string;
-  coords1: number[];
-  coords2: number[];
-  subSpaces: string[];
-  thingList: string[];
-}
 
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isSpacesVisible, setSpacesVisible] = useState(true);
   const [isAddSpaceVisible, setAddSpaceVisible] = useState(false);
   const [isAddThingVisible, setAddThingVisible] = useState(false);
+  const [isScannerVisible, setScannerVisible] = useState(false); // State for QR scanner
   const [currentSpace, setCurrentSpace] = useState("");
   const [shouldRender, setShouldRender] = useState(isSpacesVisible);
   const user = useUser();
@@ -36,14 +27,38 @@ export default function Home() {
     }
   }, [user]);
 
+  const handleQRCodeScanned = (data: string) => {
+    Alert.alert("QR Code Scanned", `Scanned Data: ${data}`);
+    setScannerVisible(false); // Only toggles scanner visibility
+  };
+
   return (
     <View style={styles.container}>
+      {/* Header */}
       <Header
         onPressMenu={setMenuVisible}
         onPressSpaceList={setSpacesVisible}
+        onPressQRCode={() => setScannerVisible(true)} // Show QR scanner
         currentSpace={currentSpace}
         shouldRender={shouldRender}
       />
+
+      {/* Main Content */}
+      <View style={styles.content}>
+        <ThingsList spaceId={currentSpace} />
+      </View>
+
+      {/* QRCodeScanner Overlay */}
+      {isScannerVisible && (
+        <View style={styles.qrScannerOverlay}>
+          <QRCodeScanner
+            onQRCodeScanned={handleQRCodeScanned}
+            onClose={() => setScannerVisible(false)}
+          />
+        </View>
+      )}
+
+      {/* Modals and Overlays */}
       <Menu
         visible={isMenuVisible}
         onClose={() => {
@@ -72,9 +87,6 @@ export default function Home() {
         }}
         currentSpace={currentSpace}
       />
-      <View style={styles.content}>
-        <ThingsList spaceId={currentSpace} />
-      </View>
       <AddThingView
         visible={isAddThingVisible}
         onClose={() => setAddThingVisible(false)}
@@ -93,7 +105,11 @@ const styles = StyleSheet.create({
     flex: 1, // Ensures Home fills the screen
   },
   content: {
-    flex: 1, // Ensures ThingsList takes up remaining space
+    flex: 1, // Allows the main content to take up remaining space below the header
     backgroundColor: "white",
+  },
+  qrScannerOverlay: {
+    ...StyleSheet.absoluteFillObject, // Covers the entire screen
+    zIndex: 1000, // Ensures it appears above other components
   },
 });
