@@ -33,7 +33,10 @@ export default function useFetchSpace(id: string) {
   // SubSpaces fetch effect
   useEffect(() => {
     const fetchSubSpaces = async () => {
-      if (!space?.subSpaces.length) return;
+      if (!space?.subSpaces.length) {
+        setSubSpaces([]);
+        return
+      };
 
       setIsLoading(true);
       try {
