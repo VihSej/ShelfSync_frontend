@@ -1,18 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddThingButton from "@/components/AddThingButton";
 import AddThingView from "@/components/AddThingView";
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
 import { View, StyleSheet } from "react-native";
+
+import { useUser } from "@/hooks/useUser";
+
+
 import ThingsList from "@/components/ThingsList";
+
+interface Space {
+  _id: string;
+  user_id: string;
+  name: string;
+  coords1: number[];
+  coords2: number[];
+  subSpaces: string[];
+  thingList: string[];
+}
 
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
-  const [isSpacesVisible, setSpacesVisible] = useState(false);
+  const [isSpacesVisible, setSpacesVisible] = useState(true);
   const [isAddThingVisible, setAddThingVisible] = useState(false);
   const [currentSpace, setCurrentSpace] = useState("");
   const [shouldRender, setShouldRender] = useState(isSpacesVisible);
+  const user = useUser();
+
+  useEffect(() => {
+    if (user?.universe) {
+      setCurrentSpace(user.universe);
+    }
+  }, [user]);
 
   return (
     <View style={styles.container}>

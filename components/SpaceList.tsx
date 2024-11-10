@@ -7,8 +7,18 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
-import { useSpaceNavigation } from "../hooks/useSpaceNavigation";
 import SpaceListMenu from "./SpaceListMenu";
+import useFetchSpace from "@/hooks/useFetchSpace";
+
+interface Space {
+  _id: string;
+  user_id: string;
+  name: string;
+  coords1: number[];
+  coords2: number[];
+  subSpaces: string[];
+  thingList: string[];
+}
 
 interface SpaceListProps {
   visible: boolean;
@@ -45,7 +55,7 @@ export default function SpaceList({
     });
   }, [visible]);
 
-  const { spaces, subSpaces, isLoading } = useSpaceNavigation(shouldRender);
+  const { space: spaces, subSpaces, isLoading } = useFetchSpace(currentSpace);
 
   if (!shouldRender) return null;
 
@@ -63,6 +73,7 @@ export default function SpaceList({
         spaces={spaces}
         subSpaces={subSpaces}
         onClose={onClose}
+        setCurrentSpace={setCurrentSpace}
       />
     </View>
   );

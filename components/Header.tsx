@@ -3,8 +3,17 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Header as HeaderRNE } from "@rneui/themed";
 import { Icon } from "@rneui/base";
 import { useRouter } from "expo-router";
-import fetchUser from "@/services/fetchUser";
-import { useSpaceNavigation } from "@/hooks/useSpaceNavigation";
+import useFetchSpace from "@/hooks/useFetchSpace";
+
+interface Space {
+  _id: string;
+  user_id: string;
+  name: string;
+  coords1: number[];
+  coords2: number[];
+  subSpaces: string[];
+  thingList: string[];
+}
 
 interface HeaderProps {
   onPressMenu: (value: boolean) => void;
@@ -25,10 +34,9 @@ export default function Header({
   onPressMenu,
   onPressSpaceList,
   currentSpace,
-  shouldRender,
 }: HeaderProps) {
-  const { userUniverse } = useSpaceNavigation(shouldRender);
   const router = useRouter();
+  const { space } = useFetchSpace(currentSpace);
   return (
     <View style={styles.container}>
       <HeaderRNE
@@ -63,7 +71,7 @@ export default function Header({
             </View>
           </View>
         }
-        centerComponent={{ text: userUniverse?.name, style: styles.heading }}
+        centerComponent={{ text: space?.name, style: styles.heading }}
       />
     </View>
   );

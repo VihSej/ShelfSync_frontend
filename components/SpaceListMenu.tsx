@@ -18,8 +18,9 @@ interface SpaceListMenuProps {
   slideAnim: Animated.Value;
   isLoading: boolean;
   spaces?: Space;
-  subSpaces: Space[];
+  subSpaces: Space[] | undefined;
   onClose: () => void;
+  setCurrentSpace: (value: string) => void;
 }
 const SPACELIST_WIDTH = 300;
 export default function SpaceListMenu({
@@ -28,6 +29,7 @@ export default function SpaceListMenu({
   spaces,
   subSpaces,
   onClose,
+  setCurrentSpace,
 }: SpaceListMenuProps) {
   return (
     <Animated.View
@@ -52,11 +54,17 @@ export default function SpaceListMenu({
         </TouchableOpacity>
       )}
       {!isLoading &&
-        subSpaces.map((item) => (
+        subSpaces?.length !== 0 &&
+        subSpaces?.map((item) => (
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.5}
             key={item._id}
+            onPress={() => {
+              if (item?._id) {
+                setCurrentSpace(item._id);
+              }
+            }}
           >
             <SpaceListItem name={item.name} key={item._id} />
           </TouchableOpacity>
