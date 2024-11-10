@@ -59,12 +59,6 @@ export default function Menu({ visible, onClose }: MenuProps) {
         >
           <Icon name="arrow-forward" color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <Text style={styles.menuText}>Search</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <Text style={styles.menuText}>Pinned Items</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
           activeOpacity={0.5}
