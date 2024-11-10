@@ -1,4 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
 import { SERVER_URL, JWT_TOKEN } from "../envVariables";
 
 export async function addThing(data: {
