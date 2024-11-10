@@ -1,14 +1,13 @@
 import { Icon } from "@rneui/base";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function CreateNewSpace() {
+interface AddThingButtonProps {
+  onPress: () => void;
+}
+
+export default function AddThingButton({ onPress }: AddThingButtonProps) {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        console.log("Pressed!");
-      }}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <View style={styles.ViewStyles}>
         <Icon type="material-community" name="plus" color="white" size={50} />
       </View>
