@@ -13,6 +13,7 @@ interface Space {
   coords2: number[];
   subSpaces: string[];
   thingList: string[];
+  image?: string;
 }
 
 interface SpaceListMenuProps {
@@ -102,7 +103,7 @@ export default function SpaceListMenu({
               }
             }}
           >
-            <SpaceListItem name={item.name} key={item._id} />
+            <SpaceListItem name={item.name} key={item._id} img={item.image}/>
           </TouchableOpacity>
         ))}
     </Animated.View>

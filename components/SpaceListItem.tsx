@@ -2,13 +2,18 @@ import { View, StyleSheet, Text, Image } from "react-native";
 
 interface SpaceListItemProps {
   name: string;
-  img?: string;
+  img?: string; // Optional image URL
 }
 
 export default function SpaceListItem({ name, img }: SpaceListItemProps) {
+  const placeholderImg = "https://www.nicepng.com/png/detail/505-5051331_location-icon-teal.png"; // Online placeholder image
+
   return (
     <View style={styles.container}>
-      <Image source={{ uri: img }} style={styles.image} />
+      <Image
+        source={{ uri: img || placeholderImg }} // Fallback to placeholder if img is undefined
+        style={styles.image}
+      />
       <Text style={styles.text}>{name}</Text>
     </View>
   );
