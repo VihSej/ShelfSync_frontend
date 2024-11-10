@@ -23,6 +23,7 @@ export function useSpaceNavigation(shouldRender: boolean) {
   const [user, setUser] = useState<User>();
   const [subSpaces, setSubSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userUniverse, setUserUniverse] = useState<Space>();
 
   // User fetch effect
   useEffect(() => {
@@ -47,7 +48,8 @@ export function useSpaceNavigation(shouldRender: boolean) {
       if (user?.universe) {
         setIsLoading(true);
         try {
-          await fetchSpace(user.universe, setSpaces);
+          const universeData = await fetchSpace(user.universe, setSpaces);
+          setUserUniverse(universeData);
         } catch (err) {
           console.error("Error fetching space:", err);
         } finally {
@@ -85,5 +87,5 @@ export function useSpaceNavigation(shouldRender: boolean) {
     fetchSubSpaces();
   }, [spaces]);
 
-  return { spaces, subSpaces, isLoading };
+  return { spaces, subSpaces, isLoading, userUniverse, user };
 }

@@ -13,12 +13,22 @@ import SpaceListMenu from "./SpaceListMenu";
 interface SpaceListProps {
   visible: boolean;
   onClose: () => void;
+  currentSpace: string;
+  setCurrentSpace: (value: string) => void;
+  shouldRender: boolean;
+  setShouldRender: (value: boolean) => void;
 }
 
 const SPACELIST_WIDTH = 300;
-export default function SpaceList({ visible, onClose }: SpaceListProps) {
+export default function SpaceList({
+  visible,
+  onClose,
+  currentSpace,
+  setCurrentSpace,
+  shouldRender,
+  setShouldRender,
+}: SpaceListProps) {
   const slideAnim = React.useRef(new Animated.Value(-300)).current;
-  const [shouldRender, setShouldRender] = useState(visible);
 
   React.useEffect(() => {
     if (visible) {
