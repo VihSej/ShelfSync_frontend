@@ -1,4 +1,4 @@
-import { SERVER_URL, JWT_TOKEN } from "@/envVariables";
+import { SERVER_URL, JWT_TOKEN } from "../envVariables";
 import { useState } from "react";
 import { Alert } from "react-native";
 
