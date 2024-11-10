@@ -20,9 +20,15 @@ interface Thing {
 
 interface ThingsListProps {
   spaceId: string;
+  refreshTrigger: boolean; // Used to trigger data refresh
+  setRefreshTrigger: (value: boolean) => void;
 }
 
-const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
+const ThingsList: React.FC<ThingsListProps> = ({
+  spaceId,
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const [things, setThings] = useState<Thing[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +37,7 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
+
   const loadThings = async () => {
     if (!spaceId) return; // Avoid fetching if spaceId is empty
     try {
@@ -48,6 +55,8 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   loadThings();
 }, [spaceId, refresh]); // Ensure this runs only when spaceId changes
 
+    loadThings();
+  }, [spaceId, refreshTrigger]); // Reload when spaceId or refreshTrigger changes
 
   const handleThingPress = (thing: Thing) => {
     setSelectedThing(thing);

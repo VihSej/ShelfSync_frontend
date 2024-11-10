@@ -33,17 +33,18 @@ export default function useFetchSpace(id: string) {
   // SubSpaces fetch effect
   useEffect(() => {
     const fetchSubSpaces = async () => {
-      if (!space?.subSpaces.length) {
+      // Check if `space` or `subSpaces` is undefined or empty
+      if (!space || !Array.isArray(space.subSpaces) || space.subSpaces.length === 0) {
         setSubSpaces([]);
-        return
-      };
-
+        return;
+      }
+  
       setIsLoading(true);
       try {
         const fetchedSubSpaces = await Promise.all(
           space.subSpaces.map((subSpaceId) => fetchSpace(subSpaceId))
         );
-
+  
         setSubSpaces(fetchedSubSpaces);
       } catch (err) {
         console.error("Error fetching subspaces:", err);
@@ -51,7 +52,7 @@ export default function useFetchSpace(id: string) {
         setIsLoading(false);
       }
     };
-
+  
     fetchSubSpaces();
   }, [space]);
   return { space, subSpaces, isLoading };
