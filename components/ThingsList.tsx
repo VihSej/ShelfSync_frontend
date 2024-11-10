@@ -28,6 +28,7 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   const [error, setError] = useState<string | null>(null);
   const [selectedThing, setSelectedThing] = useState<Thing | null>(null);
   const [isThingViewVisible, setIsThingViewVisible] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
   const loadThings = async () => {
@@ -45,7 +46,7 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   };
 
   loadThings();
-}, [spaceId]); // Ensure this runs only when spaceId changes
+}, [spaceId, refresh]); // Ensure this runs only when spaceId changes
 
 
   const handleThingPress = (thing: Thing) => {
@@ -91,7 +92,7 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
       />
       <ThingView
         visible={isThingViewVisible}
-        onClose={() => setIsThingViewVisible(false)}
+        onClose={() => {setIsThingViewVisible(false); setRefresh(!refresh) }}
         thing={selectedThing}
       />
     </View>

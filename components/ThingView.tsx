@@ -38,6 +38,7 @@ const ThingView: React.FC<ThingViewProps> = ({
 
   const onDelete = async () => {
     await deleteThing(thing._id)
+    onClose();
   }
 
   const handleDelete = () => {
