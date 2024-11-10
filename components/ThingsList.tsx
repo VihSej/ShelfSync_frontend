@@ -20,9 +20,15 @@ interface Thing {
 
 interface ThingsListProps {
   spaceId: string;
+  refreshTrigger: boolean; // Used to trigger data refresh
+  setRefreshTrigger: (value: boolean) => void;
 }
 
-const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
+const ThingsList: React.FC<ThingsListProps> = ({
+  spaceId,
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const [things, setThings] = useState<Thing[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,23 +36,22 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   const [isThingViewVisible, setIsThingViewVisible] = useState(false);
 
   useEffect(() => {
-  const loadThings = async () => {
-    if (!spaceId) return; // Avoid fetching if spaceId is empty
-    try {
-      setIsLoading(true);
-      const items = await fetchThings(spaceId, true);
-      setThings(items);
-      setError(null);
-    } catch (err) {
-      setError("Failed to load things. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const loadThings = async () => {
+      if (!spaceId) return; // Avoid fetching if spaceId is empty
+      try {
+        setIsLoading(true);
+        const items = await fetchThings(spaceId, true);
+        setThings(items);
+        setError(null);
+      } catch (err) {
+        setError("Failed to load things. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  loadThings();
-}, [spaceId]); // Ensure this runs only when spaceId changes
-
+    loadThings();
+  }, [spaceId, refreshTrigger]); // Reload when spaceId or refreshTrigger changes
 
   const handleThingPress = (thing: Thing) => {
     setSelectedThing(thing);

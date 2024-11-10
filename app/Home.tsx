@@ -6,8 +6,9 @@ import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
 import QRCodeScanner from "@/components/QRCodeScanner";
-import { View, StyleSheet, Alert } from "react-native";
-
+import ThingView from "@/components/ThingView"; // Import ThingView
+import Toast from "react-native-toast-message"; // Toast library
+import { View, StyleSheet } from "react-native";
 import { useUser } from "@/hooks/useUser";
 import ThingsList from "@/components/ThingsList";
 
@@ -17,8 +18,11 @@ export default function Home() {
   const [isAddSpaceVisible, setAddSpaceVisible] = useState(false);
   const [isAddThingVisible, setAddThingVisible] = useState(false);
   const [isScannerVisible, setScannerVisible] = useState(false); // State for QR scanner
+  const [isThingViewVisible, setThingViewVisible] = useState(false); // State for ThingView
   const [currentSpace, setCurrentSpace] = useState("");
-  const [shouldRender, setShouldRender] = useState(isSpacesVisible);
+  const [selectedThing, setSelectedThing] = useState(null); // Selected Thing for ThingView
+  const [refreshTrigger, setRefreshTrigger] = useState(false); // Trigger for ThingsList refresh
+  const [showToast, setShowToast] = useState(false); // Control toast visibility
   const user = useUser();
 
   useEffect(() => {
@@ -27,35 +31,60 @@ export default function Home() {
     }
   }, [user]);
 
-  const handleQRCodeScanned = (data: string) => {
-    Alert.alert("QR Code Scanned", `Scanned Data: ${data}`);
-    setScannerVisible(false); // Only toggles scanner visibility
+  const handleQRCodeScanned = (thing: any) => {
+    setSelectedThing(thing);
+    setScannerVisible(false);
+    setThingViewVisible(true);
   };
-
+ 
   return (
     <View style={styles.container}>
+      {/* Toast Component */}
+      {showToast && (
+        <Toast
+          onHide={() => setShowToast(false)} // Reset toast visibility after hide
+          position="top"
+        />
+      )}
+
       {/* Header */}
       <Header
         onPressMenu={setMenuVisible}
         onPressSpaceList={setSpacesVisible}
         onPressQRCode={() => setScannerVisible(true)} // Show QR scanner
         currentSpace={currentSpace}
-        shouldRender={shouldRender}
+        shouldRender={isSpacesVisible} // Pass `shouldRender` prop
       />
 
       {/* Main Content */}
       <View style={styles.content}>
-        <ThingsList spaceId={currentSpace} />
+        <ThingsList
+          spaceId={currentSpace}
+          refreshTrigger={refreshTrigger} // Pass refresh trigger
+          setRefreshTrigger={setRefreshTrigger} // Pass refresh setter
+        />
       </View>
 
       {/* QRCodeScanner Overlay */}
       {isScannerVisible && (
         <View style={styles.qrScannerOverlay}>
           <QRCodeScanner
-            onQRCodeScanned={handleQRCodeScanned}
+            onQRCodeScanned={handleQRCodeScanned} // Handle successful scan
             onClose={() => setScannerVisible(false)}
           />
         </View>
+      )}
+
+      {/* ThingView Modal */}
+      {selectedThing && (
+        <ThingView
+        visible={isThingViewVisible}
+        thing={selectedThing}
+        onClose={() => {
+          setThingViewVisible(false);
+          setSelectedThing(null);
+        }}
+      />
       )}
 
       {/* Modals and Overlays */}
@@ -74,8 +103,8 @@ export default function Home() {
         }}
         currentSpace={currentSpace}
         setCurrentSpace={setCurrentSpace}
-        shouldRender={shouldRender}
-        setShouldRender={setShouldRender}
+        shouldRender={isSpacesVisible}
+        setShouldRender={setSpacesVisible}
         setAddSpaceVisible={setAddSpaceVisible}
       />
       <AddSpaceView
@@ -93,6 +122,7 @@ export default function Home() {
         onConfirm={() => {
           setAddThingVisible(false);
           console.log("New thing added!");
+          setRefreshTrigger((prev) => !prev); // Toggle trigger to refresh ThingsList
         }}
         currentSpace={currentSpace}
       />
