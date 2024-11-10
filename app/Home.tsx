@@ -16,6 +16,7 @@ interface Space {
   subSpaces: string[];
   thingList: string[];
 }
+import ThingsList from "@/components/ThingsList";
 
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -57,7 +58,9 @@ export default function Home() {
         shouldRender={shouldRender}
         setShouldRender={setShouldRender}
       />
-      <View style={styles.internalContainer}></View>
+      <View style={styles.content}>
+        <ThingsList spaceId={currentSpace} />
+      </View>
       <AddThingView
         visible={isAddThingVisible}
         onClose={() => setAddThingVisible(false)}
@@ -73,12 +76,10 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    justifyContent: "space-between",
-    flex: 1,
+    flex: 1, // Ensures Home fills the screen
   },
-  internalContainer: {
+  content: {
+    flex: 1, // Ensures ThingsList takes up remaining space
     backgroundColor: "white",
-    flex: 1,
   },
 });
