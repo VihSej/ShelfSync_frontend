@@ -34,26 +34,21 @@ const ThingsList: React.FC<ThingsListProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedThing, setSelectedThing] = useState<Thing | null>(null);
   const [isThingViewVisible, setIsThingViewVisible] = useState(false);
-  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-
-  const loadThings = async () => {
-    if (!spaceId) return; // Avoid fetching if spaceId is empty
-    try {
-      setIsLoading(true);
-      const items = await fetchThings(spaceId, true);
-      setThings(items);
-      setError(null);
-    } catch (err) {
-      setError("Failed to load things. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  loadThings();
-}, [spaceId, refresh]); // Ensure this runs only when spaceId changes
+    const loadThings = async () => {
+      if (!spaceId) return; // Avoid fetching if spaceId is empty
+      try {
+        setIsLoading(true);
+        const items = await fetchThings(spaceId, true);
+        setThings(items);
+        setError(null);
+      } catch (err) {
+        setError("Failed to load things. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     loadThings();
   }, [spaceId, refreshTrigger]); // Reload when spaceId or refreshTrigger changes
@@ -101,7 +96,7 @@ const ThingsList: React.FC<ThingsListProps> = ({
       />
       <ThingView
         visible={isThingViewVisible}
-        onClose={() => {setIsThingViewVisible(false); setRefresh(!refresh) }}
+        onClose={() => setIsThingViewVisible(false)}
         thing={selectedThing}
       />
     </View>
