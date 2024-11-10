@@ -12,6 +12,11 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import fetchItem from "../services/fetchThing"; // Import the new fetchItem service
 import ThingView from "@/components/ThingView"; // Import ThingView to display item details
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs([
+  'BarCodeScanner has been deprecated and will be removed in a future SDK version.',
+]);
 
 interface QRCodeScannerProps {
   onQRCodeScanned: (data: string) => void;
