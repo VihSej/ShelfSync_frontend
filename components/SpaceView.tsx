@@ -14,7 +14,7 @@ import { Icon } from "@rneui/base";
 // import QRCODE from "./QRCODE";
 // import deleteSpace from "../services/deleteSpace";
 
-interface ThingViewProps {
+interface SpaceViewProps {
   visible: boolean;
   onClose: () => void;
   onDelete?: () => void;
@@ -26,7 +26,7 @@ interface ThingViewProps {
   } | null;
 }
 
-const ThingView: React.FC<ThingViewProps> = ({
+const SpaceView: React.FC<SpaceViewProps> = ({
   visible,
   onClose,
   space,
@@ -248,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ThingView;
+export default SpaceView;
