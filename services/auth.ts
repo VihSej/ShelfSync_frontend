@@ -16,7 +16,7 @@ export const login = async (email: string, password: string) => {
     return true;
 }
 
-export const register = async (name: "string", email: string, password: string) => {
+export const register = async (name: string, email: string, password: string) => {
     const response = await fetch(`${SERVER_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,4 +33,13 @@ export const register = async (name: "string", email: string, password: string) 
 
 export const getJWT = async () => {
     return await getItemAsync("token");
+}
+
+export const logout = async () => {
+    await setItemAsync("token", "");
+}
+
+export const isLoggedIn = async () => {
+    const token = await getJWT();
+    return token !== null && token !== "";
 }

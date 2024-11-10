@@ -1,13 +1,14 @@
-import { View, Text, Image, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { Input } from "@rneui/themed";
 import { StyleSheet } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { login, logout } from "../services/auth";
+import { register, logout } from "../services/auth";
 import { useEffect, useState } from "react";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const router = useRouter();
   
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,12 +18,12 @@ export default function LoginScreen() {
     setLoading(false);
   })()}, []);
 
-  const handleLogin = async () => {
-    const isSuccess = await login(email, password);
+  const handleRegister = async () => {
+    const isSuccess = await register(name, email, password);
     if (isSuccess)
       router.push("/");
     else
-      Alert.alert("Login failed", "Invalid email or password");
+      Alert.alert("Register failed", "Please try again");
   }
 
   if (loading)
@@ -36,6 +37,14 @@ export default function LoginScreen() {
     <Image
       source={require("../assets/images/app-icon.jpg")}
       style={styles.picture}
+    />
+
+    <Text style={styles.label}>Name</Text>
+    <Input
+      value={name}
+      onChangeText={setName}
+      containerStyle={styles.inputContainer}
+      inputStyle={styles.inputStyle}
     />
 
     <Text style={styles.label}>Email</Text>
@@ -55,13 +64,13 @@ export default function LoginScreen() {
       inputStyle={styles.inputStyle}
     />
 
-    <TouchableOpacity style={styles.button} onPress={handleLogin}>
-      <Text style={styles.buttonText}>Login</Text>
+    <TouchableOpacity style={styles.button} onPress={handleRegister}>
+      <Text style={styles.buttonText}>Register</Text>
     </TouchableOpacity>
     <View style={styles.linkContainer}>
-      <Text style={styles.linkText0}>No account? </Text>
-      <TouchableOpacity onPress={() => router.push("/register")}>
-        <Text style={styles.linkText}>Sign up</Text>
+      <Text style={styles.linkText0}>Already have an account? </Text>
+      <TouchableOpacity onPress={() => router.push("/login")}>
+        <Text style={styles.linkText}>Login</Text>
       </TouchableOpacity>
     </View>
 
@@ -86,8 +95,8 @@ const styles = StyleSheet.create({
   label: { 
     fontSize: 16, 
     color: "#333", 
-    marginTop: 20, 
-    marginBottom: 10, 
+    marginTop: 10, 
+    // marginBottom: 10, 
     fontWeight: "500" 
   },
   container: {
@@ -96,7 +105,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 50,
-    marginBottom: 30,
+    marginBottom: 20,
     height: 50,
     width: 200,
     borderRadius: 10,
