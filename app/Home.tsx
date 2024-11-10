@@ -23,6 +23,7 @@ export default function Home() {
   const [selectedThing, setSelectedThing] = useState(null); // Selected Thing for ThingView
   const [refreshTrigger, setRefreshTrigger] = useState(false); // Trigger for ThingsList refresh
   const [spaceRefresh, setSpaceRefresh] = useState(false); // Trigger for Space
+  const [isSpaceInfoVisible, setIsSpaceInfoVisible] = useState(false);
   const user = useUser();
 
   useEffect(() => {
@@ -99,6 +100,7 @@ export default function Home() {
         setShouldRender={setSpacesVisible}
         setAddSpaceVisible={setAddSpaceVisible}
         spaceRefresh={spaceRefresh}
+        setIsSpaceInfoVisible={setIsSpaceInfoVisible}
       />
       <AddSpaceView
         visible={isAddSpaceVisible}
@@ -106,6 +108,7 @@ export default function Home() {
         onConfirm={() => {
           setAddSpaceVisible(false);
           console.log("New space added!");
+          setSpaceRefresh((prev) => !prev);
         }}
         currentSpace={currentSpace}
       />
