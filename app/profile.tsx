@@ -1,11 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
-import { Icon } from "@rneui/base";
+import { Icon, Avatar } from "@rneui/base";
 import { TouchableOpacity } from "react-native";
+import { Input } from "@rneui/themed";
+import { useEffect, useState } from "react";
+import fetchUser from "../services/fetchUser";
+
 
 export default function ProfileScreen() {
   const router = useRouter();
+
+  const [user, setUser] = useState({ name: "", email: "" });
+  useEffect(() => { fetchUser(setUser) }, []);
 
   return (
     <>
@@ -31,23 +38,63 @@ export default function ProfileScreen() {
         }}
       />
       <View style={styles.container}>
-        <Text>Profile Name</Text>
-        <Text>Profile Picture</Text>
-        <Text>Profile email</Text>
-        <Text>Edit profile options</Text>
-        <Text>Sign Out</Text>
+
+        <Avatar
+          size="xlarge"
+          rounded
+          icon={{ name: 'user', type: 'font-awesome' }}
+          containerStyle={styles.picture}
+        />
+
+        <Text style={styles.label}>Name</Text>
+        <Input
+          value={user.name}
+          editable={false}
+          containerStyle={styles.inputContainer}
+          inputStyle={styles.inputStyle}
+        />
+
+        <Text style={styles.label}>Email</Text>
+        <Input
+          value={user.email}
+          editable={false}
+          containerStyle={styles.inputContainer}
+          inputStyle={styles.inputStyle}
+        />
+
+        {/* <Text>Edit profile options</Text> */}
+        {/* <Text>Sign Out</Text> */}
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  picture: {
+    backgroundColor: 'gray', 
+    margin: 50, 
+    alignSelf: "center"
+  },
+  inputContainer: { 
+    paddingHorizontal: 0 
+  },
+  inputStyle: { 
+    fontSize: 16, 
+    color: "#333" 
+  },
+  label: { 
+    fontSize: 16, 
+    color: "#333", 
+    marginTop: 20, 
+    marginBottom: 10, 
+    fontWeight: "500" 
+  },
   container: {
     flex: 1,
     padding: 20,
   },
   backButton: {
-    marginLeft: 10,
+    marginRight: 10,
   },
   headerRight: {
     marginRight: 10,
