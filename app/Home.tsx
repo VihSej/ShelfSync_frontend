@@ -8,7 +8,6 @@ import { View, StyleSheet } from "react-native";
 
 import { useUser } from "@/hooks/useUser";
 
-
 import ThingsList from "@/components/ThingsList";
 
 interface Space {
