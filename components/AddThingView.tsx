@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { addThing } from "@/services/addThing";
 
 interface AddThingViewProps {
+  currentSpace: string;
   visible: boolean;
   onClose: () => void;
   onConfirm: (data: { name: string; description: string; image: string | null }) => void;
@@ -28,6 +29,7 @@ const HEADER_HEIGHT = 90;
 
 export default function AddThingView({
   visible,
+  currentSpace,
   onClose,
   onConfirm,
 }: AddThingViewProps) {
@@ -75,7 +77,7 @@ export default function AddThingView({
     const data = {
       name: inputText,
       description: descriptionText ?? null, // Use null if descriptionText is undefined
-      space: "672fff5a53137d5672ae9c89", // Hard coded universe id for now
+      space: currentSpace, // Hard coded universe id for now
       image: selectedImage ?? null, // Use null if selectedImage is undefined
     };
   

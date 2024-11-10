@@ -34,7 +34,7 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
     if (!spaceId) return; // Avoid fetching if spaceId is empty
     try {
       setIsLoading(true);
-      const items = await fetchThings(spaceId);
+      const items = await fetchThings(spaceId, true);
       setThings(items);
       setError(null);
     } catch (err) {
