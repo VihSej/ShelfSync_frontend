@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AddThingButton from "@/components/AddThingButton";
 import AddThingView from "@/components/AddThingView";
+import AddSpaceView from "@/components/AddSpaceView";
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
@@ -23,6 +24,7 @@ interface Space {
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isSpacesVisible, setSpacesVisible] = useState(true);
+  const [isAddSpaceVisible, setAddSpaceVisible] = useState(false);
   const [isAddThingVisible, setAddThingVisible] = useState(false);
   const [currentSpace, setCurrentSpace] = useState("");
   const [shouldRender, setShouldRender] = useState(isSpacesVisible);
@@ -59,6 +61,16 @@ export default function Home() {
         setCurrentSpace={setCurrentSpace}
         shouldRender={shouldRender}
         setShouldRender={setShouldRender}
+        setAddSpaceVisible={setAddSpaceVisible}
+      />
+      <AddSpaceView
+        visible={isAddSpaceVisible}
+        onClose={() => setAddSpaceVisible(false)}
+        onConfirm={() => {
+          setAddSpaceVisible(false);
+          console.log("New space added!");
+        }}
+        currentSpace={currentSpace}
       />
       <View style={styles.content}>
         <ThingsList spaceId={currentSpace} />
