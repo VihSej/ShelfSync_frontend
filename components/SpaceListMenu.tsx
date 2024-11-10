@@ -1,5 +1,5 @@
 import { Icon } from "@rneui/base";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import Loading from "./Loading";
 import SpaceListItem from "./SpaceListItem";
 import { Text } from "react-native";
@@ -20,7 +20,9 @@ interface SpaceListMenuProps {
   spaces?: Space;
   subSpaces: Space[] | undefined;
   onClose: () => void;
+  currentSpace: string;
   setCurrentSpace: (value: string) => void;
+  setAddSpaceVisible: (value: boolean) => void;
 }
 const SPACELIST_WIDTH = 300;
 export default function SpaceListMenu({
@@ -29,8 +31,20 @@ export default function SpaceListMenu({
   spaces,
   subSpaces,
   onClose,
+  currentSpace,
   setCurrentSpace,
+  setAddSpaceVisible,
 }: SpaceListMenuProps) {
+
+  const handleCreateButton = () => {
+    console.log(currentSpace);
+    setAddSpaceVisible(true);
+  };
+
+  const handleHomeButton = () => {
+    console.log("Home button clicked");
+  };
+
   return (
     <Animated.View
       style={[
@@ -40,13 +54,32 @@ export default function SpaceListMenu({
         },
       ]}
     >
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={onClose}
-        activeOpacity={0.7}
-      >
-        <Icon name="arrow-back" color="white" />
-      </TouchableOpacity>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={onClose}
+          activeOpacity={0.7}
+        >
+          <Icon name="arrow-back" color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleCreateButton}
+          activeOpacity={0.7}
+        >
+          <Icon name="add" color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleHomeButton}
+          activeOpacity={0.7}
+        >
+          <Icon name="home" color="white" />
+        </TouchableOpacity>
+      </View>
+
       {isLoading && <Loading />}
       {!isLoading && (
         <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
@@ -74,6 +107,14 @@ export default function SpaceListMenu({
 }
 
 const styles = StyleSheet.create({
+  buttonRow: {
+    display: "flex",
+    flexDirection: "row",
+    // alignItems: "flex-end",
+    justifyContent: "center",
+    marginRight: 30,
+    // justifyContent: "space-between",
+  },
   parentSpace: {
     padding: 15,
     borderBottomWidth: 1,
@@ -99,8 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
-    marginRight: 30,
-    marginLeft: 20,
+    // marginRight: 30,
+    marginLeft: 10,
     marginBottom: 20,
   },
   menu: {
