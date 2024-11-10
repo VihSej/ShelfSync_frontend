@@ -3,6 +3,7 @@ import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import Loading from "./Loading";
 import SpaceListItem from "./SpaceListItem";
 import { Text } from "react-native";
+import { useUser } from "@/hooks/useUser";
 
 interface Space {
   _id: string;
@@ -40,9 +41,11 @@ export default function SpaceListMenu({
     console.log(currentSpace);
     setAddSpaceVisible(true);
   };
-
+  
+  const user = useUser();
   const handleHomeButton = () => {
-    console.log("Home button clicked");
+    if (user?.universe)
+      setCurrentSpace(user.universe);
   };
 
   return (
