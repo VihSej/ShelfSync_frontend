@@ -39,12 +39,13 @@ export default function ProfileScreen() {
       />
       <View style={styles.container}>
 
-        <Avatar
-          size="xlarge"
-          rounded
-          icon={{ name: 'user', type: 'font-awesome' }}
-          containerStyle={styles.picture}
-        />
+      <Avatar
+  size="xlarge"
+  rounded
+  icon={{ name: 'user-o', type: 'font-awesome', color: "white" }} // Set the inner icon color
+  containerStyle={[styles.picture, { backgroundColor: "darkcyan" }]} // Set the background color
+/>
+
 
         <Text style={styles.label}>Name</Text>
         <Input
@@ -83,11 +84,11 @@ const styles = StyleSheet.create({
     color: "#333" 
   },
   label: { 
+    fontWeight: "bold",
     fontSize: 16, 
     color: "#333", 
     marginTop: 20, 
     marginBottom: 10, 
-    fontWeight: "500" 
   },
   container: {
     flex: 1,
