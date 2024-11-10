@@ -94,6 +94,7 @@ export default function Home() {
           setAddThingVisible(false);
           console.log("New thing added!");
         }}
+        currentSpace={currentSpace}
       />
       <AddThingButton onPress={() => setAddThingVisible(true)} />
     </View>

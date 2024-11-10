@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import {
   View,
   Text,
