@@ -20,21 +20,23 @@ const ThingsList: React.FC<ThingsListProps> = ({ spaceId }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadThings = async () => {
-      try {
-        setIsLoading(true);
-        const items = await fetchThings(spaceId);
-        setThings(items);
-        setError(null);
-      } catch (err) {
-        setError("Failed to load things. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const loadThings = async () => {
+    if (!spaceId) return; // Avoid fetching if spaceId is empty
+    try {
+      setIsLoading(true);
+      const items = await fetchThings(spaceId);
+      setThings(items);
+      setError(null);
+    } catch (err) {
+      setError("Failed to load things. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    loadThings();
-  }, [spaceId]);
+  loadThings();
+}, [spaceId]); // Ensure this runs only when spaceId changes
+
 
   if (isLoading) {
     return (
