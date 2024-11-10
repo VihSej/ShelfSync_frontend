@@ -225,14 +225,14 @@ const styles = StyleSheet.create({
   imageButtonText: { color: "white", fontWeight: "bold", textAlign: "center" },
   addItemBar: {
     position: "absolute",
-    bottom: 80,
+    bottom: 100,
     left: 0,
     right: 0,
-    height: 90,
-    paddingBottom: 13,
+    height: 50,
+    borderRadius: 10,
     backgroundColor: "green",
     justifyContent: "center",
     alignItems: "center",
   },
-  addItemBarText: { color: "#fff", fontSize: 25, fontWeight: "600" },
+  addItemBarText: { color: "#fff", fontSize: 20, fontWeight: "600", alignSelf: "center", textAlign: "center" },
 });
