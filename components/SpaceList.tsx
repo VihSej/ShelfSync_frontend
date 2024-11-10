@@ -27,6 +27,7 @@ interface SpaceListProps {
   setCurrentSpace: (value: string) => void;
   shouldRender: boolean;
   setShouldRender: (value: boolean) => void;
+  setAddSpaceVisible: (value: boolean) => void;
 }
 
 const SPACELIST_WIDTH = 300;
@@ -37,6 +38,7 @@ export default function SpaceList({
   setCurrentSpace,
   shouldRender,
   setShouldRender,
+  setAddSpaceVisible,
 }: SpaceListProps) {
   const slideAnim = React.useRef(new Animated.Value(-300)).current;
 
@@ -73,7 +75,9 @@ export default function SpaceList({
         spaces={spaces}
         subSpaces={subSpaces}
         onClose={onClose}
+        currentSpace={currentSpace}
         setCurrentSpace={setCurrentSpace}
+        setAddSpaceVisible={setAddSpaceVisible}
       />
     </View>
   );
