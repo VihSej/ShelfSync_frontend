@@ -28,6 +28,7 @@ interface SpaceListProps {
   shouldRender: boolean;
   setShouldRender: (value: boolean) => void;
   setAddSpaceVisible: (value: boolean) => void;
+  spaceRefresh: boolean;
 }
 
 const SPACELIST_WIDTH = 300;
@@ -39,6 +40,7 @@ export default function SpaceList({
   shouldRender,
   setShouldRender,
   setAddSpaceVisible,
+  spaceRefresh,
 }: SpaceListProps) {
   const slideAnim = React.useRef(new Animated.Value(-300)).current;
 
@@ -57,7 +59,7 @@ export default function SpaceList({
     });
   }, [visible]);
 
-  const { space: spaces, subSpaces, isLoading } = useFetchSpace(currentSpace);
+  const { space: spaces, subSpaces, isLoading } = useFetchSpace(currentSpace, spaceRefresh);
 
   if (!shouldRender) return null;
 

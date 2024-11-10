@@ -11,7 +11,7 @@ interface Space {
   thingList: string[];
 }
 
-export default function useFetchSpace(id: string) {
+export default function useFetchSpace(id: string, spaceRefresh: boolean) {
   const [space, setSpace] = useState<Space>();
   const [subSpaces, setSubSpaces] = useState<Space[]>();
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function useFetchSpace(id: string) {
       }
     };
     fetchSpaceData();
-  }, [id]);
+  }, [id, spaceRefresh]);
 
   // SubSpaces fetch effect
   useEffect(() => {
@@ -54,6 +54,6 @@ export default function useFetchSpace(id: string) {
     };
   
     fetchSubSpaces();
-  }, [space]);
+  }, [space, spaceRefresh]);
   return { space, subSpaces, isLoading };
 }
