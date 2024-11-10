@@ -37,8 +37,6 @@ export default function ProfileScreen() {
           ),
         }}
       />
-
-      {/* Profile content */}
       <View style={styles.container}>
 
         <Avatar
