@@ -5,7 +5,10 @@ import Header from "@/components/Header";
 import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
 import { View, StyleSheet } from "react-native";
+
 import { useUser } from "@/hooks/useUser";
+
+import ThingsList from "@/components/ThingsList";
 
 interface Space {
   _id: string;
@@ -16,7 +19,6 @@ interface Space {
   subSpaces: string[];
   thingList: string[];
 }
-import ThingsList from "@/components/ThingsList";
 
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
