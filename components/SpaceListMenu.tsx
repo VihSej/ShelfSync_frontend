@@ -1,8 +1,18 @@
 import { Icon } from "@rneui/base";
-import { Animated, StyleSheet, TouchableOpacity, View, FlatList, Text } from "react-native";
+import {
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  FlatList,
+  Text,
+  KeyboardAvoidingView,
+} from "react-native";
 import Loading from "./Loading";
 import SpaceListItem from "./SpaceListItem";
 import { useUser } from "@/hooks/useUser";
+import React from "react";
 
 interface Space {
   _id: string;
@@ -38,12 +48,22 @@ export default function SpaceListMenu({
   setCurrentSpace,
   setAddSpaceVisible,
 }: SpaceListMenuProps) {
+  const user = useUser();
+
+  const animateOut = () => {
+    Animated.timing(slideAnim, {
+      toValue: -SPACELIST_WIDTH, // Move out of view
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      onClose(); // Trigger the external onClose callback after animation
+    });
+  };
+
   const handleCreateButton = () => {
-    console.log(currentSpace);
     setAddSpaceVisible(true);
   };
 
-  const user = useUser();
   const handleHomeButton = () => {
     if (user?.universe) setCurrentSpace(user.universe);
   };
@@ -63,63 +83,70 @@ export default function SpaceListMenu({
   );
 
   return (
-    <Animated.View
-      style={[
-        styles.menu,
-        {
-          transform: [{ translateX: slideAnim }],
-        },
-      ]}
-    >
-      <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={onClose}
-          activeOpacity={0.7}
+    <TouchableWithoutFeedback onPress={animateOut}>
+      <KeyboardAvoidingView style={styles.outerContainer} behavior="padding">
+        <Animated.View
+          style={[
+            styles.menu,
+            {
+              transform: [{ translateX: slideAnim }],
+            },
+          ]}
         >
-          <Icon name="arrow-back" color="white" />
-        </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={animateOut} // Close with animation
+              activeOpacity={0.7}
+            >
+              <Icon name="arrow-back" color="white" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleCreateButton}
-          activeOpacity={0.7}
-        >
-          <Icon name="add" color="white" />
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleCreateButton}
+              activeOpacity={0.7}
+            >
+              <Icon name="add" color="white" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleHomeButton}
-          activeOpacity={0.7}
-        >
-          <Icon name="home" color="white" />
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleHomeButton}
+              activeOpacity={0.7}
+            >
+              <Icon name="home" color="white" />
+            </TouchableOpacity>
+          </View>
 
-      {isLoading && <Loading />}
+          {isLoading && <Loading />}
 
-      {!isLoading && (
-        <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
-          <Text style={styles.parentName}>{spaces?.name}</Text>
-        </TouchableOpacity>
-      )}
+          {!isLoading && (
+            <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
+              <Text style={styles.parentName}>{spaces?.name}</Text>
+            </TouchableOpacity>
+          )}
 
-      {!isLoading && (
-        <FlatList
-          data={subSpaces}
-          renderItem={renderSpaceItem}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
-    </Animated.View>
+          {!isLoading && (
+            <FlatList
+              data={subSpaces}
+              renderItem={renderSpaceItem}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={styles.listContent}
+            />
+          )}
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: dim background when menu is open
+  },
   buttonRow: {
-    display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     marginRight: 30,
@@ -145,7 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "flex-end",
     marginLeft: 10,
     marginBottom: 20,
   },
@@ -167,7 +193,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   listContent: {
-    paddingBottom: 10, // Optional: Add padding to avoid cutting off last item
+    paddingBottom: 10,
   },
   menuItem: {
     padding: 15,
