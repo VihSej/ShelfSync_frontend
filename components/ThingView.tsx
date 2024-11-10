@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Icon } from "@rneui/base";
 import QRCODE from "./QRCODE";
@@ -15,6 +16,7 @@ import QRCODE from "./QRCODE";
 interface ThingViewProps {
   visible: boolean;
   onClose: () => void;
+  onDelete?: () => void;
   thing: {
     name: string;
     _id: string;
@@ -23,11 +25,34 @@ interface ThingViewProps {
   } | null;
 }
 
-const ThingView: React.FC<ThingViewProps> = ({ visible, onClose, thing }) => {
+const ThingView: React.FC<ThingViewProps> = ({
+  visible,
+  onClose,
+  thing,
+  onDelete,
+}) => {
   const [isImageLoading, setIsImageLoading] = React.useState(false);
   const [hasImageError, setHasImageError] = React.useState(false);
 
   if (!thing) return null;
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Item",
+      `Are you sure you want to delete "${thing.name}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: onDelete,
+          style: "destructive",
+        },
+      ]
+    );
+  };
 
   return (
     <Modal
@@ -88,24 +113,32 @@ const ThingView: React.FC<ThingViewProps> = ({ visible, onClose, thing }) => {
               />
             </View>
           </ScrollView>
+
+          <View style={styles.bottomBar}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={handleDelete}
+            >
+              <Icon name="delete" color="white" size={24} />
+              <Text style={styles.deleteButtonText}>Delete Item</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent backdrop
-    justifyContent: "flex-end", // Makes the modal slide up from bottom
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   content: {
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: "90%", // Takes up 90% of screen height
-    paddingBottom: 20,
+    height: "90%",
   },
   header: {
     flexDirection: "row",
@@ -166,7 +199,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "white",
     borderRadius: 8,
-    // Optional shadow
+    marginBottom: 80, // Added space for bottom bar
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -175,6 +208,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  deleteButton: {
+    backgroundColor: "#dc3545",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
 
