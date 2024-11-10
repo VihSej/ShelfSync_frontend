@@ -70,10 +70,10 @@ export default function Menu({ visible, onClose }: MenuProps) {
           activeOpacity={0.5}
           onPress={() => router.push("/profile")}
         >
-          <Text style={styles.menuText}>Your Account</Text>
+          <Text style={styles.menuText}>My Account</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} activeOpacity={0.5}>
-          <Text style={styles.menuText}>Login / Sign Out</Text>
+        <TouchableOpacity onPress={() => router.push("/login")} style={styles.menuItem} activeOpacity={0.5}>
+          <Text style={styles.menuText}>Sign Out</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>
