@@ -1,16 +1,10 @@
 import { SERVER_URL, JWT_TOKEN } from "../envVariables";
 import { Alert } from "react-native";
 
-export default async function fetchSpace(
-  id: string | undefined,
-  setSpaces?: (value: any) => void
-) {
+export default async function deleteThing(id: string) {
   try {
-    // Log the full URL for debugging
-    console.log("Fetching from:", `${SERVER_URL}/spaces/${id}`);
-
-    const response = await fetch(`${SERVER_URL}/spaces/${id}`, {
-      method: "GET",
+    const response = await fetch(`${SERVER_URL}/things/${id}`, {
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${JWT_TOKEN}`,
         "Content-Type": "application/json",
@@ -23,13 +17,6 @@ export default async function fetchSpace(
       }
       throw new Error(`Server responded with status: ${response.status}`);
     }
-
-    const data = await response.json();
-    console.log();
-    console.log(data);
-    console.log();
-    setSpaces?.(data);
-    return data;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";

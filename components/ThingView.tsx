@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Icon } from "@rneui/base";
 import QRCODE from "./QRCODE";
+import deleteThing from "../services/deleteThing";
 
 interface ThingViewProps {
   visible: boolean;
@@ -29,12 +30,15 @@ const ThingView: React.FC<ThingViewProps> = ({
   visible,
   onClose,
   thing,
-  onDelete,
 }) => {
+  if (!thing) return null;
+
   const [isImageLoading, setIsImageLoading] = React.useState(false);
   const [hasImageError, setHasImageError] = React.useState(false);
 
-  if (!thing) return null;
+  const onDelete = async () => {
+    await deleteThing(thing._id)
+  }
 
   const handleDelete = () => {
     Alert.alert(
