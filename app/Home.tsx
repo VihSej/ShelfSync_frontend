@@ -7,7 +7,7 @@ import Menu from "@/components/Menu";
 import SpaceList from "@/components/SpaceList";
 import QRCodeScanner from "@/components/QRCodeScanner";
 import ThingView from "@/components/ThingView"; // Import ThingView
-import Toast from "react-native-toast-message"; // Toast library
+// import Toast from "react-native-toast-message"; // Toast library
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/hooks/useUser";
 import ThingsList from "@/components/ThingsList";
@@ -22,6 +22,7 @@ export default function Home() {
   const [currentSpace, setCurrentSpace] = useState("");
   const [selectedThing, setSelectedThing] = useState(null); // Selected Thing for ThingView
   const [refreshTrigger, setRefreshTrigger] = useState(false); // Trigger for ThingsList refresh
+  const [spaceRefresh, setSpaceRefresh] = useState(false); // Trigger for Space
   const user = useUser();
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export default function Home() {
         shouldRender={isSpacesVisible}
         setShouldRender={setSpacesVisible}
         setAddSpaceVisible={setAddSpaceVisible}
+        spaceRefresh={spaceRefresh}
       />
       <AddSpaceView
         visible={isAddSpaceVisible}
