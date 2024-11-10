@@ -1,8 +1,7 @@
 import { Icon } from "@rneui/base";
-import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity, View, FlatList, Text } from "react-native";
 import Loading from "./Loading";
 import SpaceListItem from "./SpaceListItem";
-import { Text } from "react-native";
 import { useUser } from "@/hooks/useUser";
 
 interface Space {
@@ -26,7 +25,9 @@ interface SpaceListMenuProps {
   setCurrentSpace: (value: string) => void;
   setAddSpaceVisible: (value: boolean) => void;
 }
+
 const SPACELIST_WIDTH = 300;
+
 export default function SpaceListMenu({
   slideAnim,
   isLoading,
@@ -37,17 +38,29 @@ export default function SpaceListMenu({
   setCurrentSpace,
   setAddSpaceVisible,
 }: SpaceListMenuProps) {
-
   const handleCreateButton = () => {
     console.log(currentSpace);
     setAddSpaceVisible(true);
   };
-  
+
   const user = useUser();
   const handleHomeButton = () => {
-    if (user?.universe)
-      setCurrentSpace(user.universe);
+    if (user?.universe) setCurrentSpace(user.universe);
   };
+
+  const renderSpaceItem = ({ item }: { item: Space }) => (
+    <TouchableOpacity
+      style={styles.menuItem}
+      activeOpacity={0.5}
+      onPress={() => {
+        if (item?._id) {
+          setCurrentSpace(item._id);
+        }
+      }}
+    >
+      <SpaceListItem name={item.name} img={item.image} />
+    </TouchableOpacity>
+  );
 
   return (
     <Animated.View
@@ -85,27 +98,21 @@ export default function SpaceListMenu({
       </View>
 
       {isLoading && <Loading />}
+
       {!isLoading && (
         <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
           <Text style={styles.parentName}>{spaces?.name}</Text>
         </TouchableOpacity>
       )}
-      {!isLoading &&
-        subSpaces?.length !== 0 &&
-        subSpaces?.map((item) => (
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.5}
-            key={item._id}
-            onPress={() => {
-              if (item?._id) {
-                setCurrentSpace(item._id);
-              }
-            }}
-          >
-            <SpaceListItem name={item.name} key={item._id} img={item.image}/>
-          </TouchableOpacity>
-        ))}
+
+      {!isLoading && (
+        <FlatList
+          data={subSpaces}
+          renderItem={renderSpaceItem}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
     </Animated.View>
   );
 }
@@ -114,22 +121,18 @@ const styles = StyleSheet.create({
   buttonRow: {
     display: "flex",
     flexDirection: "row",
-    // alignItems: "flex-end",
     justifyContent: "center",
     marginRight: 30,
-    // justifyContent: "space-between",
   },
   parentSpace: {
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   parentName: {
-    // New style for parent name
     fontSize: 22,
     fontWeight: "bold",
     color: "#2c3e50",
@@ -140,11 +143,9 @@ const styles = StyleSheet.create({
     width: 50,
     backgroundColor: "darkcyan",
     borderRadius: 100,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
-    // marginRight: 30,
     marginLeft: 10,
     marginBottom: 20,
   },
@@ -164,6 +165,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  listContent: {
+    paddingBottom: 10, // Optional: Add padding to avoid cutting off last item
   },
   menuItem: {
     padding: 15,
