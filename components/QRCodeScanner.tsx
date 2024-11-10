@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Dimmed background
   },
   scannerContainer: {
-    height: "86%", // Adjust scanner height
+    height: "84%", // Adjust scanner height
     backgroundColor: "black",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,

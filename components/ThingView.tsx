@@ -10,12 +10,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Icon } from "@rneui/base";
+import QRCODE from "./QRCODE";
 
 interface ThingViewProps {
   visible: boolean;
   onClose: () => void;
   thing: {
     name: string;
+    _id: string;
     description?: string;
     image?: string;
   } | null;
@@ -75,6 +77,15 @@ const ThingView: React.FC<ThingViewProps> = ({ visible, onClose, thing }) => {
               {thing.description && (
                 <Text style={styles.description}>{thing.description}</Text>
               )}
+            </View>
+
+            <View style={styles.qrContainer}>
+              <QRCODE
+                value={thing._id}
+                size={200}
+                color="black"
+                backgroundColor="white"
+              />
             </View>
           </ScrollView>
         </View>
@@ -148,6 +159,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     lineHeight: 24,
+  },
+  qrContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "white",
+    borderRadius: 8,
+    // Optional shadow
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
