@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,17 +9,21 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  Image,
+  Alert,
+  Linking,
 } from "react-native";
-import { Input } from "@rneui/themed"; // Import the Input component
+import { Input } from "@rneui/themed";
+import * as ImagePicker from "expo-image-picker";
 
 interface AddThingViewProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: (data: { name: string; description: string }) => void; // Update onConfirm to include name and description
+  onConfirm: (data: { name: string; description: string; image: string | null }) => void;
 }
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-const HEADER_HEIGHT = 90; // Match the height of your Header
+const HEADER_HEIGHT = 90;
 
 export default function AddThingView({
   visible,
@@ -28,95 +32,152 @@ export default function AddThingView({
 }: AddThingViewProps) {
   const slideAnim = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [shouldRender, setShouldRender] = useState(visible);
-  const [inputText, setInputText] = useState(""); // State for item name
-  const [descriptionText, setDescriptionText] = useState(""); // State for item description
-  const [error, setError] = useState<string | undefined>(undefined); // State for error message
+  const [inputText, setInputText] = useState("");
+  const [descriptionText, setDescriptionText] = useState("");
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Centralized close logic
   const handleClose = () => {
-    setError(undefined); // Reset error message
-    setInputText(""); // Clear item name
-    setDescriptionText(""); // Clear description
-    onClose(); // Trigger onClose prop
+    setError(undefined);
+    setInputText("");
+    setDescriptionText("");
+    setSelectedImage(null);
+    onClose();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visible) {
-      setShouldRender(true); // Render component when visible
+      setShouldRender(true);
     }
     Animated.timing(slideAnim, {
-      toValue: visible ? HEADER_HEIGHT : SCREEN_HEIGHT, // Animate to just below the header
+      toValue: visible ? HEADER_HEIGHT : SCREEN_HEIGHT,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
       if (!visible) {
-        setShouldRender(false); // Hide after animation completes
+        setShouldRender(false);
       }
     });
   }, [visible]);
 
-  if (!shouldRender) return null; // Don't render when hidden
+  if (!shouldRender) return null;
 
   const handleConfirm = () => {
     if (!inputText.trim()) {
-      setError("Item Name is required"); // Show error if input is empty
+      setError("Item Name is required");
       return;
     }
-    setError(undefined); // Clear error on valid input
-    onConfirm({ name: inputText, description: descriptionText }); // Pass name and description to onConfirm
-    handleClose(); // Reset and close the view
+    setError(undefined);
+    onConfirm({ name: inputText, description: descriptionText, image: selectedImage });
+    handleClose();
+  };
+
+  const requestPermission = async (
+    permissionRequest: () => Promise<ImagePicker.PermissionResponse>,
+    permissionType: string
+  ): Promise<boolean> => {
+    const { status, canAskAgain } = await permissionRequest();
+    if (status === "granted") {
+      return true;
+    } else if (!canAskAgain) {
+      Alert.alert(
+        "Permission Denied",
+        `Please enable ${permissionType} permissions in your device settings.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Settings",
+            onPress: () => Linking.openSettings(),
+          },
+        ]
+      );
+      return false;
+    } else {
+      return false;
+    }
+  };
+
+  const handleLaunchCamera = async () => {
+    const hasPermission = await requestPermission(
+      ImagePicker.requestCameraPermissionsAsync,
+      "camera"
+    );
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+
+  const handleLaunchLibrary = async () => {
+    const hasPermission = await requestPermission(
+      ImagePicker.requestMediaLibraryPermissionsAsync,
+      "photo library"
+    );
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedImage(result.assets[0].uri);
+    }
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.overlay}>
-        {/* Backdrop to close the view */}
-        <TouchableOpacity
-          style={styles.backdrop}
-          onPress={handleClose} // Centralized close logic
-          activeOpacity={1}
-        />
-        {/* Animated sliding panel */}
-        <Animated.View
-          style={[
-            styles.container,
-            {
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
+        <TouchableOpacity style={styles.backdrop} onPress={handleClose} activeOpacity={1} />
+        <Animated.View style={[styles.container, { transform: [{ translateY: slideAnim }] }]}>
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-            {/* Close button */}
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
 
-            {/* Item Name Label */}
             <Text style={styles.inputLabel}>Item Name</Text>
-            {/* Item Name Input */}
             <Input
               placeholder="Enter item name here"
               value={inputText}
-              onChangeText={setInputText} // Update state with input text
+              onChangeText={setInputText}
               containerStyle={styles.inputContainer}
               inputStyle={styles.inputStyle}
-              errorMessage={error} // Display error message if any
+              errorMessage={error}
               errorStyle={styles.errorText}
             />
 
-            {/* Description Label */}
             <Text style={styles.inputLabel}>Item Description (Optional)</Text>
-            {/* Description Input */}
             <Input
               placeholder="Enter item description here"
               value={descriptionText}
-              onChangeText={setDescriptionText} // Update state with description text
+              onChangeText={setDescriptionText}
               containerStyle={styles.inputContainer}
               inputStyle={styles.inputStyle}
             />
 
-            {/* Add Item Bar */}
-            
+            <Text style={styles.inputLabel}>Upload Item Image</Text>
+            <View style={styles.imageContainer}>
+              {selectedImage && <Image source={{ uri: selectedImage }} style={styles.imagePreview} />}
+              <View style={styles.imageButtons}>
+                <TouchableOpacity style={styles.imageButton} onPress={handleLaunchCamera}>
+                  <Text style={styles.imageButtonText}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.imageButton} onPress={handleLaunchLibrary}>
+                  <Text style={styles.imageButtonText}>Upload Photo</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <TouchableOpacity style={styles.addItemBar} onPress={handleConfirm}>
               <Text style={styles.addItemBarText}>Add Item</Text>
             </TouchableOpacity>
@@ -128,29 +189,18 @@ export default function AddThingView({
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject, // Shorthand for absolute positioning
-    zIndex: 1000,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent backdrop
-  },
+  overlay: { ...StyleSheet.absoluteFillObject, zIndex: 1000 },
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.5)" },
   container: {
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 0, // Start from the bottom of the screen
-    top: HEADER_HEIGHT, // Slide up to just below the header
+    bottom: 0,
+    top: HEADER_HEIGHT,
     backgroundColor: "#fff",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   closeButton: {
     position: "absolute",
@@ -163,46 +213,26 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     borderRadius: 18,
   },
-  closeButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    position: "relative",
-    paddingHorizontal: 0,
-  },
-  inputLabel: {
-    fontSize: 16, // Consistent and readable size
-    color: "#333", // Neutral color for accessibility
-    marginTop: 20,
-    marginBottom: 10, // Space between the label and the input
-    fontWeight: "500", // Slightly bold for emphasis
-  },
-  inputStyle: {
-    fontSize: 16,
-    color: "#333",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 14,
-    marginTop: 5,
-  },
+  closeButtonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+  inputContainer: { paddingHorizontal: 0 },
+  inputLabel: { fontSize: 16, color: "#333", marginTop: 20, marginBottom: 10, fontWeight: "500" },
+  inputStyle: { fontSize: 16, color: "#333" },
+  errorText: { color: "red", fontSize: 14, marginTop: 5 },
+  imageContainer: { marginTop: 20, alignItems: "center" },
+  imagePreview: { width: 200, height: 200, borderRadius: 10, marginBottom: 10 },
+  imageButtons: { flexDirection: "row", justifyContent: "space-between", width: "100%" },
+  imageButton: { backgroundColor: "green", padding: 10, borderRadius: 8, marginHorizontal: 5 },
+  imageButtonText: { color: "white", fontWeight: "bold", textAlign: "center" },
   addItemBar: {
-    position: "absolute", // Stick to the bottom of the screen
-    bottom: 80, // Align to the screen bottom
+    position: "absolute",
+    bottom: 80,
     left: 0,
     right: 0,
-    height: 90, // Height of the bar
+    height: 90,
     paddingBottom: 13,
-    backgroundColor: "green", // Bar background color
+    backgroundColor: "green",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4, // Slight shadow for better visibility
   },
-  addItemBarText: {
-    color: "#fff",
-    fontSize: 25,
-    fontWeight: "600",
-  },
+  addItemBarText: { color: "#fff", fontSize: 25, fontWeight: "600" },
 });
