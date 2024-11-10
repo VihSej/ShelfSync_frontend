@@ -34,6 +34,7 @@ interface SpaceListMenuProps {
   currentSpace: string;
   setCurrentSpace: (value: string) => void;
   setAddSpaceVisible: (value: boolean) => void;
+  setIsSpaceInfoVisible: (value: boolean) => void;
 }
 
 const SPACELIST_WIDTH = 300;
@@ -47,6 +48,7 @@ export default function SpaceListMenu({
   currentSpace,
   setCurrentSpace,
   setAddSpaceVisible,
+  setIsSpaceInfoVisible,
 }: SpaceListMenuProps) {
   const user = useUser();
 
@@ -67,6 +69,10 @@ export default function SpaceListMenu({
   const handleHomeButton = () => {
     if (user?.universe) setCurrentSpace(user.universe);
   };
+
+  const handleInfoPress = () => {
+    setIsSpaceInfoVisible(true);
+  }
 
   const renderSpaceItem = ({ item }: { item: Space }) => (
     <TouchableOpacity
@@ -122,8 +128,9 @@ export default function SpaceListMenu({
           {isLoading && <Loading />}
 
           {!isLoading && (
-            <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
+            <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5} onPress={handleInfoPress}>
               <Text style={styles.parentName}>{spaces?.name}</Text>
+              <Icon name="info" color="blue" />
             </TouchableOpacity>
           )}
 

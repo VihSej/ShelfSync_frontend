@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import SpaceListMenu from "./SpaceListMenu";
 import useFetchSpace from "@/hooks/useFetchSpace";
+import SpaceView from "./SpaceView";
 
 interface Space {
   _id: string;
@@ -42,6 +43,8 @@ export default function SpaceList({
   setAddSpaceVisible,
   spaceRefresh,
 }: SpaceListProps) {
+  const [isSpaceViewVisible, setIsSpaceViewVisible] = useState(false);
+
   const slideAnim = React.useRef(new Animated.Value(-300)).current;
 
   React.useEffect(() => {
@@ -80,6 +83,13 @@ export default function SpaceList({
         currentSpace={currentSpace}
         setCurrentSpace={setCurrentSpace}
         setAddSpaceVisible={setAddSpaceVisible}
+        setIsSpaceInfoVisible={setIsSpaceViewVisible}
+      />
+
+      <SpaceView 
+        visible={isSpaceViewVisible}
+        onClose={() => setIsSpaceViewVisible(false)}
+        space={spaces}
       />
     </View>
   );

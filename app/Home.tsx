@@ -11,6 +11,7 @@ import ThingView from "@/components/ThingView"; // Import ThingView
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/hooks/useUser";
 import ThingsList from "@/components/ThingsList";
+import SpaceView from "@/components/SpaceView";
 
 export default function Home() {
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -23,7 +24,6 @@ export default function Home() {
   const [selectedThing, setSelectedThing] = useState(null); // Selected Thing for ThingView
   const [refreshTrigger, setRefreshTrigger] = useState(false); // Trigger for ThingsList refresh
   const [spaceRefresh, setSpaceRefresh] = useState(false); // Trigger for Space
-  const [isSpaceInfoVisible, setIsSpaceInfoVisible] = useState(false);
   const user = useUser();
 
   useEffect(() => {
@@ -88,6 +88,7 @@ export default function Home() {
           setSpacesVisible(false);
         }}
       />
+
       <SpaceList
         visible={isSpacesVisible}
         onClose={() => {
@@ -100,7 +101,6 @@ export default function Home() {
         setShouldRender={setSpacesVisible}
         setAddSpaceVisible={setAddSpaceVisible}
         spaceRefresh={spaceRefresh}
-        setIsSpaceInfoVisible={setIsSpaceInfoVisible}
       />
       <AddSpaceView
         visible={isAddSpaceVisible}
@@ -112,6 +112,7 @@ export default function Home() {
         }}
         currentSpace={currentSpace}
       />
+
       <AddThingView
         visible={isAddThingVisible}
         onClose={() => setAddThingVisible(false)}

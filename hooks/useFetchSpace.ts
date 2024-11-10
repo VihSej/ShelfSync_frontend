@@ -5,10 +5,12 @@ interface Space {
   _id: string;
   user_id: string;
   name: string;
+  description: string;
   coords1: number[];
   coords2: number[];
   subSpaces: string[];
   thingList: string[];
+  image?: string;
 }
 
 export default function useFetchSpace(id: string, spaceRefresh: boolean) {
