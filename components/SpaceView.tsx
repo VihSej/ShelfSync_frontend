@@ -23,7 +23,7 @@ interface SpaceViewProps {
     _id: string;
     description?: string;
     image?: string;
-  } | null;
+  } | undefined;
 }
 
 const SpaceView: React.FC<SpaceViewProps> = ({
