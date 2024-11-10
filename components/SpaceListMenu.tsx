@@ -1,9 +1,18 @@
 import { Icon } from "@rneui/base";
-import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  FlatList,
+  Text,
+  KeyboardAvoidingView,
+} from "react-native";
 import Loading from "./Loading";
 import SpaceListItem from "./SpaceListItem";
-import { Text } from "react-native";
 import { useUser } from "@/hooks/useUser";
+import React from "react";
 
 interface Space {
   _id: string;
@@ -13,6 +22,7 @@ interface Space {
   coords2: number[];
   subSpaces: string[];
   thingList: string[];
+  image?: string;
 }
 
 interface SpaceListMenuProps {
@@ -25,7 +35,9 @@ interface SpaceListMenuProps {
   setCurrentSpace: (value: string) => void;
   setAddSpaceVisible: (value: boolean) => void;
 }
+
 const SPACELIST_WIDTH = 300;
+
 export default function SpaceListMenu({
   slideAnim,
   isLoading,
@@ -36,99 +48,118 @@ export default function SpaceListMenu({
   setCurrentSpace,
   setAddSpaceVisible,
 }: SpaceListMenuProps) {
+  const user = useUser();
+
+  const animateOut = () => {
+    Animated.timing(slideAnim, {
+      toValue: -SPACELIST_WIDTH, // Move out of view
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      onClose(); // Trigger the external onClose callback after animation
+    });
+  };
 
   const handleCreateButton = () => {
-    console.log(currentSpace);
     setAddSpaceVisible(true);
   };
-  
-  const user = useUser();
+
   const handleHomeButton = () => {
-    if (user?.universe)
-      setCurrentSpace(user.universe);
+    if (user?.universe) setCurrentSpace(user.universe);
   };
 
-  return (
-    <Animated.View
-      style={[
-        styles.menu,
-        {
-          transform: [{ translateX: slideAnim }],
-        },
-      ]}
+  const renderSpaceItem = ({ item }: { item: Space }) => (
+    <TouchableOpacity
+      style={styles.menuItem}
+      activeOpacity={0.5}
+      onPress={() => {
+        if (item?._id) {
+          setCurrentSpace(item._id);
+        }
+      }}
     >
-      <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={onClose}
-          activeOpacity={0.7}
-        >
-          <Icon name="arrow-back" color="white" />
-        </TouchableOpacity>
+      <SpaceListItem name={item.name} img={item.image} />
+    </TouchableOpacity>
+  );
 
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleCreateButton}
-          activeOpacity={0.7}
+  return (
+    <TouchableWithoutFeedback onPress={animateOut}>
+      <KeyboardAvoidingView style={styles.outerContainer} behavior="padding">
+        <Animated.View
+          style={[
+            styles.menu,
+            {
+              transform: [{ translateX: slideAnim }],
+            },
+          ]}
         >
-          <Icon name="add" color="white" />
-        </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={animateOut} // Close with animation
+              activeOpacity={0.7}
+            >
+              <Icon name="arrow-back" color="white" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleHomeButton}
-          activeOpacity={0.7}
-        >
-          <Icon name="home" color="white" />
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleCreateButton}
+              activeOpacity={0.7}
+            >
+              <Icon name="add" color="white" />
+            </TouchableOpacity>
 
-      {isLoading && <Loading />}
-      {!isLoading && (
-        <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
-          <Text style={styles.parentName}>{spaces?.name}</Text>
-        </TouchableOpacity>
-      )}
-      {!isLoading &&
-        subSpaces?.length !== 0 &&
-        subSpaces?.map((item) => (
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.5}
-            key={item._id}
-            onPress={() => {
-              if (item?._id) {
-                setCurrentSpace(item._id);
-              }
-            }}
-          >
-            <SpaceListItem name={item.name} key={item._id} />
-          </TouchableOpacity>
-        ))}
-    </Animated.View>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleHomeButton}
+              activeOpacity={0.7}
+            >
+              <Icon name="home" color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {isLoading && <Loading />}
+
+          {!isLoading && (
+            <TouchableOpacity style={styles.parentSpace} activeOpacity={0.5}>
+              <Text style={styles.parentName}>{spaces?.name}</Text>
+            </TouchableOpacity>
+          )}
+
+          {!isLoading && (
+            <FlatList
+              data={subSpaces}
+              renderItem={renderSpaceItem}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={styles.listContent}
+            />
+          )}
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: dim background when menu is open
+  },
   buttonRow: {
-    display: "flex",
     flexDirection: "row",
-    // alignItems: "flex-end",
     justifyContent: "center",
     marginRight: 30,
-    // justifyContent: "space-between",
   },
   parentSpace: {
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   parentName: {
-    // New style for parent name
     fontSize: 22,
     fontWeight: "bold",
     color: "#2c3e50",
@@ -139,11 +170,8 @@ const styles = StyleSheet.create({
     width: 50,
     backgroundColor: "darkcyan",
     borderRadius: 100,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "flex-end",
-    // marginRight: 30,
     marginLeft: 10,
     marginBottom: 20,
   },
@@ -163,6 +191,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  listContent: {
+    paddingBottom: 10,
   },
   menuItem: {
     padding: 15,

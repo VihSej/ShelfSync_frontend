@@ -22,7 +22,6 @@ export default function Home() {
   const [currentSpace, setCurrentSpace] = useState("");
   const [selectedThing, setSelectedThing] = useState(null); // Selected Thing for ThingView
   const [refreshTrigger, setRefreshTrigger] = useState(false); // Trigger for ThingsList refresh
-  const [showToast, setShowToast] = useState(false); // Control toast visibility
   const user = useUser();
 
   useEffect(() => {
@@ -39,14 +38,6 @@ export default function Home() {
  
   return (
     <View style={styles.container}>
-      {/* Toast Component */}
-      {showToast && (
-        <Toast
-          onHide={() => setShowToast(false)} // Reset toast visibility after hide
-          position="top"
-        />
-      )}
-
       {/* Header */}
       <Header
         onPressMenu={setMenuVisible}

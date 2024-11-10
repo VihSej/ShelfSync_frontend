@@ -16,6 +16,7 @@ import {
 import { Input } from "@rneui/themed";
 import * as ImagePicker from "expo-image-picker";
 import { addThing } from "@/services/addThing";
+import Loading from "@/components/Loading"; // Import the Loading component
 
 interface AddThingViewProps {
   currentSpace: string;
@@ -39,6 +40,7 @@ export default function AddThingView({
   const [descriptionText, setDescriptionText] = useState("");
   const [error, setError] = useState<string | undefined>(undefined);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const handleClose = () => {
     setError(undefined);
@@ -72,13 +74,13 @@ export default function AddThingView({
     }
   
     setError(undefined);
+    setIsLoading(true); // Start loading
   
-    // Construct the data object with null fallback for undefined values
     const data = {
       name: inputText,
-      description: descriptionText ?? null, // Use null if descriptionText is undefined
-      space: currentSpace, // Hard coded universe id for now
-      image: selectedImage ?? null, // Use null if selectedImage is undefined
+      description: descriptionText ?? null,
+      space: currentSpace,
+      image: selectedImage ?? null,
     };
   
     try {
@@ -95,9 +97,10 @@ export default function AddThingView({
     } catch (error: any) {
       console.error("Error adding data:", error);
       Alert.alert("Error", "Failed to add item.");
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
-  
 
   const requestPermission = async (
     permissionRequest: () => Promise<ImagePicker.PermissionResponse>,
@@ -168,52 +171,60 @@ export default function AddThingView({
         <TouchableOpacity style={styles.backdrop} onPress={handleClose} activeOpacity={1} />
         <Animated.View style={[styles.container, { transform: [{ translateY: slideAnim }] }]}>
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>✕</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.inputLabel}>Item Name</Text>
-            <Input
-              placeholder="Enter item name here"
-              value={inputText}
-              onChangeText={setInputText}
-              containerStyle={styles.inputContainer}
-              inputStyle={styles.inputStyle}
-              errorMessage={error}
-              errorStyle={styles.errorText}
-            />
-
-            <Text style={styles.inputLabel}>Item Description (Optional)</Text>
-            <Input
-              placeholder="Enter item description here"
-              value={descriptionText}
-              onChangeText={setDescriptionText}
-              containerStyle={styles.inputContainer}
-              inputStyle={styles.inputStyle}
-            />
-
-            <Text style={styles.inputLabel}>Upload Item Image</Text>
-            <View style={styles.imageContainer}>
-              {selectedImage && <Image source={{ uri: selectedImage }} style={styles.imagePreview} />}
-              <View style={styles.imageButtons}>
-                <TouchableOpacity style={styles.imageButton} onPress={handleLaunchCamera}>
-                  <Text style={styles.imageButtonText}>Take Photo</Text>
+            {/* Show Loading Component if isLoading */}
+            {isLoading ? (
+              <Loading text="Adding Item..." style="overlay" />
+            ) : (
+              <>
+                <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+                  <Text style={styles.closeButtonText}>✕</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.imageButton} onPress={handleLaunchLibrary}>
-                  <Text style={styles.imageButtonText}>Upload Photo</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
 
-            <TouchableOpacity style={styles.addItemBar} onPress={handleConfirm}>
-              <Text style={styles.addItemBarText}>Add Item</Text>
-            </TouchableOpacity>
+                <Text style={styles.inputLabel}>Item Name</Text>
+                <Input
+                  placeholder="Enter item name here"
+                  value={inputText}
+                  onChangeText={setInputText}
+                  containerStyle={styles.inputContainer}
+                  inputStyle={styles.inputStyle}
+                  errorMessage={error}
+                  errorStyle={styles.errorText}
+                />
+
+                <Text style={styles.inputLabel}>Item Description (Optional)</Text>
+                <Input
+                  placeholder="Enter item description here"
+                  value={descriptionText}
+                  onChangeText={setDescriptionText}
+                  containerStyle={styles.inputContainer}
+                  inputStyle={styles.inputStyle}
+                />
+
+                <Text style={styles.inputLabel}>Upload Item Image</Text>
+                <View style={styles.imageContainer}>
+                  {selectedImage && <Image source={{ uri: selectedImage }} style={styles.imagePreview} />}
+                  <View style={styles.imageButtons}>
+                    <TouchableOpacity style={styles.imageButton} onPress={handleLaunchCamera}>
+                      <Text style={styles.imageButtonText}>Take Photo</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.imageButton} onPress={handleLaunchLibrary}>
+                      <Text style={styles.imageButtonText}>Upload Photo</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <TouchableOpacity style={styles.addItemBar} onPress={handleConfirm}>
+                  <Text style={styles.addItemBarText}>Add Item</Text>
+                </TouchableOpacity>
+              </>
+            )}
           </KeyboardAvoidingView>
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
   );
 }
+
 
 const styles = StyleSheet.create({
   overlay: { ...StyleSheet.absoluteFillObject, zIndex: 1000 },
