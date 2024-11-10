@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   menuText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
   },
   backdrop: {
