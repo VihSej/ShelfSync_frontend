@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { Input } from "@rneui/themed";
 import * as ImagePicker from "expo-image-picker";
+import { addThing } from "@/services/addThing";
 
 interface AddThingViewProps {
   visible: boolean;
@@ -62,15 +63,39 @@ export default function AddThingView({
 
   if (!shouldRender) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!inputText.trim()) {
       setError("Item Name is required");
       return;
     }
+  
     setError(undefined);
-    onConfirm({ name: inputText, description: descriptionText, image: selectedImage });
-    handleClose();
+  
+    // Construct the data object with null fallback for undefined values
+    const data = {
+      name: inputText,
+      description: descriptionText ?? null, // Use null if descriptionText is undefined
+      space: "672fff5a53137d5672ae9c89", // Hard coded universe id for now
+      image: selectedImage ?? null, // Use null if selectedImage is undefined
+    };
+  
+    try {
+      const result = await addThing(data); // Call the addThing function
+      Alert.alert("Success", "Item added successfully!");
+  
+      onConfirm({
+        name: inputText,
+        description: descriptionText,
+        image: selectedImage,
+      });
+  
+      handleClose();
+    } catch (error: any) {
+      console.error("Error adding data:", error);
+      Alert.alert("Error", "Failed to add item.");
+    }
   };
+  
 
   const requestPermission = async (
     permissionRequest: () => Promise<ImagePicker.PermissionResponse>,
