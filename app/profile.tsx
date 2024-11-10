@@ -30,8 +30,6 @@ export default function ProfileScreen() {
           ),
         }}
       />
-
-      {/* Profile content */}
       <View style={styles.container}>
         <Text>Profile Name</Text>
         <Text>Profile Picture</Text>
