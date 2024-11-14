@@ -7,10 +7,8 @@ interface AddThingButtonProps {
 
 export default function AddThingButton({ onPress }: AddThingButtonProps) {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.ViewStyles}>
+    <TouchableOpacity style={styles.ViewStyles} onPress={onPress} activeOpacity={0.7}>
         <Icon type="material-community" name="plus" color="white" size={50} />
-      </View>
     </TouchableOpacity>
   );
 }
